@@ -28,7 +28,7 @@ public class DiaChiNhan {
 
     @ManyToOne
     @JoinColumn(name = "id_khach_hang", nullable = false)
-    private NguoiDung idKhachHang;
+    private NguoiDung KhachHang;
 
     @Column(name = "ma", nullable = false, length = 20)
     private String ma;

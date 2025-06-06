@@ -26,11 +26,11 @@ public class HoaDonCt {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "id_hoa_don", nullable = false)
-    private HoaDon idHoaDon;
+    private HoaDon hoaDon;
 
     @ManyToOne
     @JoinColumn(name = "id_san_pham_ct", nullable = false)
-    private ChiTietSanPham idSanPhamCt;
+    private ChiTietSanPham sanPhamCt;
 
     @Column(name = "ten_san_pham", length = 225)
     private String tenSanPham;

@@ -29,11 +29,11 @@ public class GiamGiaSanPhamCt {
 
     @ManyToOne
     @JoinColumn(name = "id_giam_gia", nullable = false)
-    private GiamGia idGiamGia;
+    private GiamGia giamGia;
 
     @ManyToOne
     @JoinColumn(name = "id_san_pham_ct", nullable = false)
-    private ChiTietSanPham idSanPhamCt;
+    private ChiTietSanPham sanPhamCt;
 
     @Column(name = "ngay_tao")
     private Date ngayTao;

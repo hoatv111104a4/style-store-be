@@ -1,9 +1,6 @@
 package com.example.style_store_be.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -63,4 +60,8 @@ public class NguoiDung {
     private Date ngayXoa;
     @Column(name = "trang_thai", nullable = false)
     private Integer trangThai;
+
+    @ManyToOne()
+    @JoinColumn(name = "id_chuc_vu")
+    private ChucVu chucVu;
 }

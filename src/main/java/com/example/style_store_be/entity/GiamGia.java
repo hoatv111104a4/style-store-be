@@ -34,7 +34,7 @@ public class GiamGia {
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_dung", nullable = false)
-    private NguoiDung idNguoiDung;
+    private NguoiDung nguoiDung;
 
     @Column(name = "ma", nullable = false)
     private String ma;
