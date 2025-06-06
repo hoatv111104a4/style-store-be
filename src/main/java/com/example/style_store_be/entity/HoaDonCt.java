@@ -8,14 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "hoa_don_ct")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class HoaDonCt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +35,13 @@ public class HoaDonCt {
     @Column(name = "ten_san_pham", length = 225)
     private String tenSanPham;
 
-    @Column(name = "gia_tien", precision = 10, scale = 2)
+    @Column(name = "gia_tien")
     private Double giaTien;
 
     @Column(name = "so_luong", nullable = false)
     private Integer soLuong;
 
-    @Column(name = "thanh_tien", precision = 12, scale = 2)
+    @Column(name = "thanh_tien")
     private Double thanhTien;
 
     @Column(name = "ngay_tao")

@@ -9,8 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -18,12 +17,14 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "dia_chi_nhan")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DiaChiNhan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "id_khach_hang", nullable = false)

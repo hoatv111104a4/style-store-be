@@ -4,8 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.Date;
 
 
@@ -13,6 +13,9 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "pt_thanh_toan")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PtThanhToan {
     @Id
     @Column(name = "id", nullable = false)

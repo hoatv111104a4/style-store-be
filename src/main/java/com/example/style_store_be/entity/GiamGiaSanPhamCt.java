@@ -10,14 +10,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "giam_gia_san_pham_ct")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class GiamGiaSanPhamCt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

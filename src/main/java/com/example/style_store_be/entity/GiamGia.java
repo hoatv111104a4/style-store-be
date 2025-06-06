@@ -12,8 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
@@ -24,6 +23,9 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "giam_gia")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class GiamGia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,25 +36,25 @@ public class GiamGia {
     @JoinColumn(name = "id_nguoi_dung", nullable = false)
     private NguoiDung idNguoiDung;
 
-    @Column(name = "ma", nullable = false, length = 20)
+    @Column(name = "ma", nullable = false)
     private String ma;
 
-    @Column(name = "ten_dot_giam", length = 50)
+    @Column(name = "ten_dot_giam")
     private String tenDotGiam;
 
-    @Column(name = "giam_gia", nullable = false, precision = 3, scale = 2)
+    @Column(name = "giam_gia", nullable = false)
     private Double giamGia;
 
-    @Column(name = "giam_toi_da", precision = 10, scale = 2)
+    @Column(name = "giam_toi_da")
     private Double giamToiDa;
 
-    @Column(name = "dieu_kien_giam", nullable = false, precision = 10, scale = 2)
+    @Column(name = "dieu_kien_giam", nullable = false)
     private Double dieuKienGiam;
 
     @Column(name = "so_luong", nullable = false)
     private Integer soLuong;
 
-    @Column(name = "nguoi_tao", nullable = false, length = 50)
+    @Column(name = "nguoi_tao", nullable = false)
     private String nguoiTao;
 
     @Column(name = "ngay_tao")
