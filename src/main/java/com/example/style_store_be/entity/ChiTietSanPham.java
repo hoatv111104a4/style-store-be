@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
+
 @Entity
 @Table(name = "san_pham_ct")
 @Getter
@@ -41,6 +43,10 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_chat_lieu")
     private ChatLieu chatLieu;
 
+    @ManyToOne
+    @JoinColumn(name = "id_hinh_anh_mau_sac")
+    private HinhAnh hinhAnhSp;
+
     @Column(name = "ma")
     private String ma;
 
@@ -67,4 +73,15 @@ public class ChiTietSanPham {
 
     @Column(name = "mo_ta")
     private String moTa;
+
+    @Column(name = "gia_ban_goc")
+    private String giaBanGoc;
+
+    @ManyToMany
+    @JoinTable(
+            name = "giam_gia_san_pham_ct",
+            joinColumns = @JoinColumn(name = "id_san_pham_ct"),
+            inverseJoinColumns = @JoinColumn(name = "id_giam_gia")
+    )
+    private Set<GiamGia> dotGiamGias;
 }
