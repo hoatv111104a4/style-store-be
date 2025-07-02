@@ -1,5 +1,4 @@
 package com.example.style_store_be.dto.request;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateRequest {
+public class UserCreationRequest {
+    private String ma;
     private String hoTen;
     private String soDienThoai;
     private String email;
@@ -24,5 +24,5 @@ public class UserUpdateRequest {
     private String tenDangNhap;
     private String matKhau;
     private Integer trangThai;
-    private Long idChucVu;
+
 }

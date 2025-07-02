@@ -1,4 +1,4 @@
-package com.example.style_store_be.dto.request;
+package com.example.style_store_be.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateRequest {
+public class UserResponse {
+    private Long id;
+    private String ma;
     private String hoTen;
     private String soDienThoai;
     private String email;
@@ -22,7 +24,9 @@ public class UserUpdateRequest {
     private Integer gioiTinh;
     private Date namSinh;
     private String tenDangNhap;
-    private String matKhau;
+    private Date ngayTao;
+    private Date ngaySua;
+    private Date ngayXoa;
     private Integer trangThai;
     private Long idChucVu;
 }

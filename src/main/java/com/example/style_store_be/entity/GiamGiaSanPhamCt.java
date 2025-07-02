@@ -24,15 +24,15 @@ import java.util.Date;
 public class GiamGiaSanPhamCt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_giam_gia", nullable = false)
+    @JoinColumn(name = "id_giam_gia")
     private GiamGia giamGia;
 
     @ManyToOne
-    @JoinColumn(name = "id_san_pham_ct", nullable = false)
+    @JoinColumn(name = "id_san_pham_ct")
     private ChiTietSanPham sanPhamCt;
 
     @Column(name = "ngay_tao")
@@ -41,7 +41,7 @@ public class GiamGiaSanPhamCt {
     @Column(name = "ngay_sua")
     private Date ngaySua;
 
-    @Column(name = "trang_thai", nullable = false)
+    @Column(name = "trang_thai")
     private Integer trangThai;
 
 }

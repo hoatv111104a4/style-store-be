@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "chuc_vu")
@@ -12,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChucVu {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,4 +33,12 @@ public class ChucVu {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+    @ManyToMany
+    @JoinTable(
+            name = "phan_quyen_chuc_vu",
+            joinColumns = @JoinColumn(name = "id_chuc_vu"),
+            inverseJoinColumns = @JoinColumn(name = "id_quyen")
+    )
+    private Set<Permission> permissions;
 }

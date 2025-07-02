@@ -27,11 +27,11 @@ public class HoaDon {
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_tao", nullable = false)
-    private NguoiDung nguoiTao;
+    private User nguoiTao;
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_xuat", nullable = false)
-    private NguoiDung nguoiXuat;
+    private User nguoiXuat;
 
     @ManyToOne
     @JoinColumn(name = "id_thanh_toan", nullable = false)
@@ -82,6 +82,6 @@ public class HoaDon {
 
     @ManyToOne
     @JoinColumn(name = "id_khach_hang")
-    private NguoiDung khachHang;
+    private User khachHang;
 
 }

@@ -12,42 +12,43 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NguoiDung {
+public class User {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
 
-    @Column(name = "ma", nullable = false, length = 20)
+    @Column(name = "ma")
     private String ma;
 
 
-    @Column(name = "ho_ten", nullable = false, length = 50)
+    @Column(name = "ho_ten")
     private String hoTen;
 
 
-    @Column(name = "so_dien_thoai", nullable = false, length = 15)
+    @Column(name = "so_dien_thoai")
     private String soDienThoai;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "cccd", length = 20)
+    @Column(name = "cccd")
     private String cccd;
 
     @Column(name = "dia_chi")
     private String diaChi;
 
-    @Column(name = "gioi_tinh", nullable = false)
+    @Column(name = "gioi_tinh")
     private Integer gioiTinh;
 
-    @Column(name = "nam_sinh", nullable = false)
-    private Integer namSinh;
+    @Column(name = "nam_sinh")
+    private Date namSinh;
 
-    @Column(name = "ten_dang_nhap", nullable = false, length = 50)
+    @Column(name = "ten_dang_nhap")
     private String tenDangNhap;
 
-    @Column(name = "mat_khau", nullable = false, length = 100)
+    @Column(name = "mat_khau")
     private String matKhau;
 
     @Column(name = "ngay_tao")
@@ -63,5 +64,5 @@ public class NguoiDung {
 
     @ManyToOne()
     @JoinColumn(name = "id_chuc_vu")
-    private ChucVu chucVu;
+    private Role role;
 }

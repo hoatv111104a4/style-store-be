@@ -23,23 +23,23 @@ import java.util.Date;
 public class DiaChiNhan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_khach_hang", nullable = false)
-    private NguoiDung KhachHang;
+    @JoinColumn(name = "id_khach_hang")
+    private User khachHang;
 
-    @Column(name = "ma", nullable = false, length = 20)
+    @Column(name = "ma")
     private String ma;
 
-    @Column(name = "dia_chi", nullable = false)
+    @Column(name = "dia_chi")
     private String diaChi;
 
-    @Column(name = "ten_nguoi_nhan", nullable = false, length = 50)
+    @Column(name = "ten_nguoi_nhan")
     private String tenNguoiNhan;
 
-    @Column(name = "so_dien_thoai", nullable = false, length = 15)
+    @Column(name = "so_dien_thoai")
     private String soDienThoai;
 
     @Column(name = "ngay_tao")
