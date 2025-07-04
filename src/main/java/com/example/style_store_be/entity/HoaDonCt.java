@@ -56,4 +56,5 @@ public class HoaDonCt {
     @Column(name = "trang_thai")
     private Integer trangThai;
 
+
 }

@@ -22,41 +22,41 @@ import java.util.Date;
 public class HoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_nguoi_tao", nullable = false)
+    @JoinColumn(name = "id_nguoi_tao")
     private User nguoiTao;
 
     @ManyToOne
-    @JoinColumn(name = "id_nguoi_xuat", nullable = false)
+    @JoinColumn(name = "id_nguoi_xuat")
     private User nguoiXuat;
 
     @ManyToOne
-    @JoinColumn(name = "id_thanh_toan", nullable = false)
+    @JoinColumn(name = "id_thanh_toan")
     private PtThanhToan thanhToan;
 
-    @Column(name = "ma", length = 225)
+    @Column(name = "ma")
     private String ma;
 
-    @Column(name = "nguoi_dat_hang", length = 225)
+    @Column(name = "nguoi_dat_hang")
     private String nguoiDatHang;
 
-    @Column(name = "nguoi_nhan_hang", length = 225)
+    @Column(name = "nguoi_nhan_hang")
     private String nguoiNhanHang;
 
     @Column(name = "dia_chi_nhan_hang")
     private String diaChiNhanHang;
 
-    @Column(name = "tong_so_luong_sp", nullable = false)
+    @Column(name = "tong_so_luong_sp")
     private Integer tongSoLuongSp;
 
 
-    @Column(name = "tong_tien", nullable = false)
+    @Column(name = "tong_tien")
     private Double tongTien;
 
-    @Column(name = "tien_thue", nullable = false)
+    @Column(name = "tien_thue")
     private Double tienThue;
 
     @Column(name = "ngay_dat")

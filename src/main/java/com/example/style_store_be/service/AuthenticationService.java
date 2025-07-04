@@ -97,6 +97,10 @@ public class AuthenticationService {
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope",buildScope(user))
+                .claim("id",user.getId())
+                .claim("hoTen",user.getHoTen())
+                .claim("tenDangNhap",user.getTenDangNhap())
+                .claim("soDienThoai",user.getSoDienThoai())
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(

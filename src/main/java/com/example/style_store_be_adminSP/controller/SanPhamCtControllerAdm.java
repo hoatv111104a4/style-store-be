@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin-san-pham-chi-tiet")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 public class SanPhamCtControllerAdm {
     @Autowired
     private SanPhamCtServiceAdm sanPhamCtService;

@@ -23,26 +23,40 @@ public class SercurityConfig {
             "/auth/dang-xuat",
             "/auth/introspect",
             "/nguoi-dung/dang-ky",
-            "/website/san-pham/**"
+            "/website/san-pham/**",
+            "/api/upload",
+            "/don-hang/dat-hang-online-chua-thanh-toan",
+            "/api/admin-san-pham-chi-tiet/**",
+            "/api/thuong-hieu/**",
+            "/api/xuat-xu/**",
+            "/api/admin-san-pham/**",
+            "/api/mau-sac/**",
+            "/api/kich-thuoc/**",
+            "/api/hinh-anh-mau-sac/**",
+            "/api/chat-lieu/**"
+
     };
 
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,PUBLIC_ENDPOINTS).permitAll()
-                        //                   .requestMatchers(HttpMethod.GET,"/entity/users").hasRole(Role.ADMIN.name())
-                        .anyRequest().authenticated());
-
-        httpSecurity.oauth2ResourceServer(
-                oauth2->
-                        oauth2.jwt(jwtConfigurer ->
-                                jwtConfigurer.decoder(customJwtDecoder)
-                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        );
-
-        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
-        return httpSecurity.build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http.cors()
+                .and()
+                .csrf().disable()
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.PUT, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer
+                                .decoder(customJwtDecoder)
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
+                );
+        return http.build();
     }
 
     JwtAuthenticationConverter jwtAuthenticationConverter(){
@@ -61,6 +75,8 @@ public class SercurityConfig {
 //                .macAlgorithm(MacAlgorithm.HS512)
 //                .build();
 //    }
+
+
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);

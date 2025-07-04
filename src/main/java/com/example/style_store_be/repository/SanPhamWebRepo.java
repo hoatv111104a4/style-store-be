@@ -19,7 +19,7 @@ public interface SanPhamWebRepo extends JpaRepository<ChiTietSanPham,Long> {
             "c.hinhAnhSp.id, c.hinhAnhSp.hinhAnh, " +
             "MAX(c.giaBanGoc), MAX(g.giamGia)) " +
             "FROM ChiTietSanPham c " +
-            "LEFT JOIN c.dotGiamGias g WITH g.trangThai = 1 " +
+            "LEFT JOIN c.dotGiamGias g WITH g.trangThai = 2 " +
             "WHERE (:tenSanPham IS NULL OR c.sanPham.ten LIKE %:tenSanPham%) " +
             "AND (:thuongHieuId IS NULL OR c.thuongHieu.id = :thuongHieuId) " +
             "AND (:mauSacId IS NULL OR c.mauSac.id = :mauSacId) " +
