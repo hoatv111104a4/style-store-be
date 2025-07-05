@@ -1,7 +1,7 @@
+
 package com.example.style_store_be_adminSP.service.impl;
 
 import com.example.style_store_be_adminSP.entity.ChatLieuAdm;
-import com.example.style_store_be_adminSP.entity.SanPhamAdm;
 import com.example.style_store_be_adminSP.reposytory.ChatLieuRepoAdm;
 import com.example.style_store_be_adminSP.service.ICommonServiceAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
 @Service
 public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
     @Autowired
@@ -20,8 +21,8 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
 
     @Override
     public Page<ChatLieuAdm> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return chatLieuRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(page, size); // Loại bỏ Sort.by("ngayTao").descending()
+        return chatLieuRepository.findAllByOrderByNgayTaoDesc(pageable);
     }
 
     @Override
@@ -30,36 +31,30 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
     }
 
     @Override
-    public SanPhamAdm add(ChatLieuAdm object) {
+    public ChatLieuAdm add(ChatLieuAdm object) {
         validate(object);
         if (object.getMa() == null || object.getMa().trim().isEmpty()) {
             object.setMa("CL-" + UUID.randomUUID().toString().substring(0, 8));
         }
-
-        object.setTrangThai(1); // Mặc định là đang hoạt động
+        object.setTrangThai(1);
         object.setNgayTao(LocalDateTime.now());
         object.setNgaySua(null);
         object.setNgayXoa(null);
-
-        chatLieuRepository.save(object);
-        return null;
+        return chatLieuRepository.save(object);
     }
 
     @Override
-    public void update(ChatLieuAdm object) {
+    public ChatLieuAdm update(ChatLieuAdm object) {
         if (object.getId() == null) {
             throw new RuntimeException("ID không được để trống khi cập nhật");
         }
         validate(object);
-
         ChatLieuAdm existing = chatLieuRepository.findById(object.getId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ChatLieu với id: " + object.getId()));
-
         existing.setTen(object.getTen());
         existing.setMoTa(object.getMoTa());
         existing.setNgaySua(LocalDateTime.now());
-
-        chatLieuRepository.save(existing);
+        return chatLieuRepository.save(existing);
     }
 
     @Override
@@ -69,7 +64,6 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
         }
         ChatLieuAdm existing = chatLieuRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ChatLieu với id: " + id));
-
         if (existing.getTrangThai() == 1) {
             existing.setNgayXoa(LocalDateTime.now());
             existing.setTrangThai(0);
@@ -78,9 +72,9 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
             existing.setTrangThai(1);
             existing.setNgaySua(LocalDateTime.now());
         }
-
         chatLieuRepository.save(existing);
     }
+
     public Page<ChatLieuAdm> searchByName(String ten, int page, int size) {
         if (ten == null || ten.trim().isEmpty()) {
             throw new RuntimeException("Tên chất liệu tìm kiếm không được để trống");
@@ -88,6 +82,15 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
         Pageable pageable = PageRequest.of(page, size);
         return chatLieuRepository.findByTenContainingIgnoreCase(ten.trim(), pageable);
     }
+
+    public Page<ChatLieuAdm> searchByNameOrCode(String keyword, int page, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new RuntimeException("Từ khóa tìm kiếm không được để trống");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return chatLieuRepository.findByTenOrMaContainingIgnoreCase(keyword.trim(), pageable);
+    }
+
     public Page<ChatLieuAdm> getActive(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return chatLieuRepository.findByNgayXoaIsNull(pageable);
@@ -110,9 +113,14 @@ public class ChatLieuServiceImplAdm implements ICommonServiceAdm<ChatLieuAdm> {
         }
         Optional<ChatLieuAdm> existing = chatLieuRepository.findByTen(object.getTen().trim());
         if (existing.isPresent()) {
-            // Nếu đang cập nhật thì phải bỏ qua chính nó
             if (object.getId() == null || !existing.get().getId().equals(object.getId())) {
                 throw new RuntimeException("Chất liệu đã tồn tại");
+            }
+        }
+        Optional<ChatLieuAdm> existingByMa = chatLieuRepository.findByMa(object.getMa().trim());
+        if (existingByMa.isPresent()) {
+            if (object.getId() == null || !existingByMa.get().getId().equals(object.getId())) {
+                throw new RuntimeException("Mã chất liệu đã tồn tại");
             }
         }
     }

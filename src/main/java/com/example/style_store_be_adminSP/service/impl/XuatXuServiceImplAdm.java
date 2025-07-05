@@ -2,6 +2,8 @@ package com.example.style_store_be_adminSP.service.impl;
 
 import com.example.style_store_be.entity.SanPham;
 import com.example.style_store_be.entity.XuatXu;
+import com.example.style_store_be_adminSP.entity.ChatLieuAdm;
+import com.example.style_store_be_adminSP.entity.KichThuocAdm;
 import com.example.style_store_be_adminSP.entity.SanPhamAdm;
 import com.example.style_store_be_adminSP.entity.XuatXuAdm;
 import com.example.style_store_be_adminSP.reposytory.XuatXuRepoAdm;
@@ -24,55 +26,50 @@ public class XuatXuServiceImplAdm implements ICommonServiceAdm<XuatXuAdm> {
     @Override
     public Page<XuatXuAdm> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return xuatXuRepository.findAll(pageable);
+        return xuatXuRepository.findAllByOrderByNgayTaoDesc(pageable);
     }
-
+    public Page<XuatXuAdm> searchByNameOrCode(String keyword, int page, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new RuntimeException("Từ khóa tìm kiếm không được để trống");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return xuatXuRepository.findByTenOrMaContainingIgnoreCase(keyword.trim(), pageable);
+    }
     @Override
     public XuatXuAdm getOne(Long id) {
         return xuatXuRepository.findById(id).orElse(null);
     }
 
     @Override
-    public SanPhamAdm add(XuatXuAdm object) {
+    public XuatXuAdm add(XuatXuAdm object) {
         validate(object);
         if (object.getMa() == null || object.getMa().trim().isEmpty()) {
             object.setMa("XX-" + UUID.randomUUID().toString().substring(0, 8));
         }
-
         object.setTrangThai(1); // Mặc định là đang hoạt động
         object.setNgayTao(LocalDateTime.now());
         object.setNgaySua(null);
         object.setNgayXoa(null);
-
-        xuatXuRepository.save(object);
-        return null;
+        return xuatXuRepository.save(object);
     }
 
     @Override
-    public void update(XuatXuAdm object) {
+    public XuatXuAdm update(XuatXuAdm object) {
         if (object.getId() == null) {
             throw new RuntimeException("ID không được để trống khi cập nhật");
         }
         validate(object);
 
         XuatXuAdm existing = xuatXuRepository.findById(object.getId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Xuất Xứ với id: " + object.getId()));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Kích Thước với id: " + object.getId()));
 
         existing.setTen(object.getTen());
         existing.setMoTa(object.getMoTa());
-        existing.setTrangThai(object.getTrangThai() != null ? object.getTrangThai() : existing.getTrangThai());
-
-        // Nếu đã xóa mềm → khôi phục
-        if (existing.getNgayXoa() != null) {
-            existing.setNgayXoa(null);
-            existing.setTrangThai(1);
-        }
-
         existing.setNgaySua(LocalDateTime.now());
 
-        xuatXuRepository.save(existing);
-    }
 
+        return  xuatXuRepository.save(existing);
+    }
     @Override
     public void delete(Long id) {
         if (id == null) {

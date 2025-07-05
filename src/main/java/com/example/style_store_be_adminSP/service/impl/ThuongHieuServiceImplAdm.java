@@ -4,6 +4,7 @@ import com.example.style_store_be.entity.SanPham;
 import com.example.style_store_be.entity.ThuongHieu;
 import com.example.style_store_be_adminSP.entity.SanPhamAdm;
 import com.example.style_store_be_adminSP.entity.ThuongHieuAdm;
+import com.example.style_store_be_adminSP.entity.XuatXuAdm;
 import com.example.style_store_be_adminSP.reposytory.ThuongHieuRepoAdm;
 import com.example.style_store_be_adminSP.service.ICommonServiceAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,22 @@ public class ThuongHieuServiceImplAdm implements ICommonServiceAdm<ThuongHieuAdm
     @Override
     public Page<ThuongHieuAdm> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return thuongHieuRepository.findAll(pageable);
+        return thuongHieuRepository.findAllByOrderByNgayTaoDesc(pageable);
     }
-
+    public Page<ThuongHieuAdm> searchByNameOrCode(String keyword, int page, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new RuntimeException("Từ khóa tìm kiếm không được để trống");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return thuongHieuRepository.findByTenOrMaContainingIgnoreCase(keyword.trim(), pageable);
+    }
     @Override
     public ThuongHieuAdm getOne(Long id) {
         return thuongHieuRepository.findById(id).orElse(null);
     }
 
     @Override
-    public SanPhamAdm add(ThuongHieuAdm object) {
+    public ThuongHieuAdm add(ThuongHieuAdm object) {
         validate(object);
         if (object.getMa() == null || object.getMa().trim().isEmpty()) {
             object.setMa("TH-" + UUID.randomUUID().toString().substring(0, 8));
@@ -44,12 +51,12 @@ public class ThuongHieuServiceImplAdm implements ICommonServiceAdm<ThuongHieuAdm
         object.setNgaySua(null);
         object.setNgayXoa(null);
 
-        thuongHieuRepository.save(object);
-        return null;
+
+        return  thuongHieuRepository.save(object);
     }
 
     @Override
-    public void update(ThuongHieuAdm object) {
+    public ThuongHieuAdm update(ThuongHieuAdm object) {
         if (object.getId() == null) {
             throw new RuntimeException("ID không được để trống khi cập nhật");
         }
@@ -70,7 +77,7 @@ public class ThuongHieuServiceImplAdm implements ICommonServiceAdm<ThuongHieuAdm
 
         existing.setNgaySua(LocalDateTime.now());
 
-        thuongHieuRepository.save(existing);
+        return thuongHieuRepository.save(existing);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.style_store_be_adminSP.service.impl;
 
 import com.example.style_store_be_adminSP.entity.KichThuocAdm;
 import com.example.style_store_be_adminSP.entity.SanPhamAdm;
+import com.example.style_store_be_adminSP.entity.ThuongHieuAdm;
 import com.example.style_store_be_adminSP.reposytory.KichThuocRepoAdm;
 import com.example.style_store_be_adminSP.service.ICommonServiceAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,22 @@ public class KichThuocServiceImplAdm implements ICommonServiceAdm<KichThuocAdm> 
     @Override
     public Page<KichThuocAdm> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return kichThuocRepository.findAll(pageable);
+        return kichThuocRepository.findAllByOrderByNgayTaoDesc(pageable);
     }
-
+    public Page<KichThuocAdm> searchByNameOrCode(String keyword, int page, int size) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new RuntimeException("Từ khóa tìm kiếm không được để trống");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return kichThuocRepository.findByTenOrMaContainingIgnoreCase(keyword.trim(), pageable);
+    }
     @Override
     public KichThuocAdm getOne(Long id) {
         return kichThuocRepository.findById(id).orElse(null);
     }
 
     @Override
-    public SanPhamAdm add(KichThuocAdm object) {
+    public KichThuocAdm add(KichThuocAdm object) {
         validate(object);
         if (object.getMa() == null || object.getMa().trim().isEmpty()) {
             object.setMa("KT-" + UUID.randomUUID().toString().substring(0, 8));
@@ -41,12 +48,13 @@ public class KichThuocServiceImplAdm implements ICommonServiceAdm<KichThuocAdm> 
         object.setNgaySua(null);
         object.setNgayXoa(null);
 
-        kichThuocRepository.save(object);
-        return null;
+
+        return kichThuocRepository.save(object);
+
     }
 
     @Override
-    public void update(KichThuocAdm object) {
+    public KichThuocAdm update(KichThuocAdm object) {
         if (object.getId() == null) {
             throw new RuntimeException("ID không được để trống khi cập nhật");
         }
@@ -59,7 +67,8 @@ public class KichThuocServiceImplAdm implements ICommonServiceAdm<KichThuocAdm> 
         existing.setMoTa(object.getMoTa());
         existing.setNgaySua(LocalDateTime.now());
 
-        kichThuocRepository.save(existing);
+
+        return  kichThuocRepository.save(existing);
     }
 
     @Override

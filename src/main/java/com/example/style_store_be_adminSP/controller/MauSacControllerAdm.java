@@ -1,10 +1,10 @@
 package com.example.style_store_be_adminSP.controller;
 
-import com.example.style_store_be.entity.MauSacSp;
 import com.example.style_store_be_adminSP.entity.MauSacSpAdm;
 import com.example.style_store_be_adminSP.service.impl.MauSacServiceImplAdm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/mau-sac")
 @CrossOrigin("*")
 public class MauSacControllerAdm {
+
     @Autowired
     private MauSacServiceImplAdm mauSacService;
 
@@ -46,45 +47,70 @@ public class MauSacControllerAdm {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody MauSacSpAdm mauSac) {
+    public ResponseEntity<?> create(@RequestBody MauSacSpAdm mauSac) {
         try {
-            mauSacService.add(mauSac);
-            return ResponseEntity.status(201).build(); // 201 Created
+            MauSacSpAdm savedMauSac = mauSacService.add(mauSac);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMauSac);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody MauSacSpAdm mauSac) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MauSacSpAdm mauSac) {
         try {
-            mauSac.setId(id); // Gán lại ID cho chắc chắn
-            mauSacService.update(mauSac);
-            return ResponseEntity.ok().build();
+            mauSac.setId(id);
+            MauSacSpAdm updatedMauSac = mauSacService.update(mauSac);
+            return ResponseEntity.ok(updatedMauSac);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @PutMapping("/toggle-status/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             mauSacService.delete(id);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
         }
     }
+
     @GetMapping("/search")
-    public ResponseEntity<Page<MauSacSpAdm>> searchByName(
-            @RequestParam String ten,
+    public ResponseEntity<?> searchByKeyword(
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            Page<MauSacSpAdm> chatLieuPage = mauSacService.searchByName(ten, page, size);
-            return ResponseEntity.ok(chatLieuPage);
+            Page<MauSacSpAdm> mauSacPage = mauSacService.searchByKeyword(keyword, page, size);
+            return ResponseEntity.ok(mauSacPage);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null); // 400 Bad Request
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }

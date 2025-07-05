@@ -8,9 +8,9 @@ public interface ICommonServiceAdm<T>{
     Page<T> getAll(int page, int size);
     T getOne(Long id);
 
-    SanPhamAdm add(T object);
+    T add(T object);
 
-    void update(T object);
+    T update(T object);
 
     void delete(Long id);
 }

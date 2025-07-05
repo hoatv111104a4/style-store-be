@@ -10,40 +10,60 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
+
     @Autowired
     private HinhAnhRepoAdm repository;
+
+    // Phương thức tiện ích để định dạng hinhAnh
+    private String formatHinhAnh(String hinhAnh) {
+        if (hinhAnh != null && !hinhAnh.isEmpty() && !hinhAnh.startsWith("/uploads/")) {
+            return "/uploads/" + hinhAnh;
+        }
+        return hinhAnh;
+    }
 
     @Override
     public Page<HinhAnhMauSacAdm> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findAll(pageable);
+        Page<HinhAnhMauSacAdm> pageResult = repository.findAll(pageable);
+        pageResult.getContent().forEach(h -> h.setHinhAnh(formatHinhAnh(h.getHinhAnh())));
+        return pageResult;
     }
 
     @Override
     public Page<HinhAnhMauSacAdm> searchByHinhAnh(String hinhAnh, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        // Giả sử bạn thêm phương thức findByHinhAnhContainingIgnoreCase trong repository
-        return repository.findByHinhAnhContainingIgnoreCase(hinhAnh, pageable);
+        Page<HinhAnhMauSacAdm> pageResult = repository.findByHinhAnhContainingIgnoreCase(hinhAnh, pageable);
+        pageResult.getContent().forEach(h -> h.setHinhAnh(formatHinhAnh(h.getHinhAnh())));
+        return pageResult;
     }
 
     @Override
     public Page<HinhAnhMauSacAdm> getActive(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findByNgayXoaIsNull(pageable);
+        Page<HinhAnhMauSacAdm> pageResult = repository.findByNgayXoaIsNull(pageable);
+        pageResult.getContent().forEach(h -> h.setHinhAnh(formatHinhAnh(h.getHinhAnh())));
+        return pageResult;
     }
 
     @Override
     public Page<HinhAnhMauSacAdm> getDeleted(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findByNgayXoaIsNotNull(pageable);
+        Page<HinhAnhMauSacAdm> pageResult = repository.findByNgayXoaIsNotNull(pageable);
+        pageResult.getContent().forEach(h -> h.setHinhAnh(formatHinhAnh(h.getHinhAnh())));
+        return pageResult;
     }
 
     @Override
     public HinhAnhMauSacAdm getOne(Long id) {
-        return repository.findById(id)
+        HinhAnhMauSacAdm hinhAnh = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hình ảnh màu sắc không tồn tại với id: " + id));
+        hinhAnh.setHinhAnh(formatHinhAnh(hinhAnh.getHinhAnh()));
+        return hinhAnh;
     }
 
     @Override
@@ -51,8 +71,11 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
         if (hinhAnhMauSac.getHinhAnh() == null || hinhAnhMauSac.getHinhAnh().isEmpty()) {
             throw new RuntimeException("Đường dẫn hình ảnh không được rỗng");
         }
+        if (!hinhAnhMauSac.getHinhAnh().startsWith("/uploads/")) {
+            hinhAnhMauSac.setHinhAnh("/uploads/" + hinhAnhMauSac.getHinhAnh());
+        }
         hinhAnhMauSac.setNgayTao(LocalDateTime.now());
-        hinhAnhMauSac.setTrangThai(1); // Mặc định trạng thái hoạt động
+        hinhAnhMauSac.setTrangThai(1);
         repository.save(hinhAnhMauSac);
     }
 
@@ -60,7 +83,7 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
     public void update(HinhAnhMauSacAdm hinhAnhMauSac) {
         HinhAnhMauSacAdm existing = getOne(hinhAnhMauSac.getId());
         if (hinhAnhMauSac.getHinhAnh() != null && !hinhAnhMauSac.getHinhAnh().isEmpty()) {
-            existing.setHinhAnh(hinhAnhMauSac.getHinhAnh());
+            existing.setHinhAnh(formatHinhAnh(hinhAnhMauSac.getHinhAnh()));
         }
         existing.setMoTa(hinhAnhMauSac.getMoTa());
         existing.setMauSac(hinhAnhMauSac.getMauSac());
@@ -75,5 +98,12 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
         existing.setNgayXoa(LocalDateTime.now());
         existing.setTrangThai(0); // Giả sử 0 là không hoạt động
         repository.save(existing);
+    }
+
+    @Override
+    public List<HinhAnhMauSacAdm> getByMauSacId(Long mauSacId) {
+        List<HinhAnhMauSacAdm> hinhAnhList = repository.findByMauSacIdAndActive(mauSacId);
+        hinhAnhList.forEach(h -> h.setHinhAnh(formatHinhAnh(h.getHinhAnh())));
+        return hinhAnhList;
     }
 }

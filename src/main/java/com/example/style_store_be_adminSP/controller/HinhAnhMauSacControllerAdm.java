@@ -1,11 +1,15 @@
 package com.example.style_store_be_adminSP.controller;
 
+import com.example.style_store_be_adminSP.dto.HinhAnhMauSacDTOAdm;
 import com.example.style_store_be_adminSP.entity.HinhAnhMauSacAdm;
 import com.example.style_store_be_adminSP.service.HinhAnhMauSacServiceAdm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/hinh-anh-mau-sac")
@@ -57,6 +61,7 @@ public class HinhAnhMauSacControllerAdm {
         return hinhAnh != null ? ResponseEntity.ok(hinhAnh) : ResponseEntity.notFound().build();
     }
 
+
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody HinhAnhMauSacAdm hinhAnhMauSac) {
         try {
@@ -65,6 +70,23 @@ public class HinhAnhMauSacControllerAdm {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(null); // 400 Bad Request
         }
+    }
+    @GetMapping("/mau-sac/{mauSacId}")
+    public ResponseEntity<List<HinhAnhMauSacDTOAdm>> getByMauSacId(@PathVariable Long mauSacId) {
+        List<HinhAnhMauSacAdm> hinhAnhList = hinhAnhMauSacService.getByMauSacId(mauSacId);
+        List<HinhAnhMauSacDTOAdm> hinhAnhDTOs = hinhAnhList.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(hinhAnhDTOs);
+    }
+
+    private HinhAnhMauSacDTOAdm mapToDTO(HinhAnhMauSacAdm entity) {
+        HinhAnhMauSacDTOAdm dto = new HinhAnhMauSacDTOAdm();
+        dto.setId(entity.getId());
+        dto.setHinhAnh(entity.getHinhAnh());
+        dto.setMauSacId(entity.getMauSac().getId());
+        dto.setTenMauSac(entity.getMauSac().getTen());
+        return dto;
     }
 
     @PutMapping("/{id}")
@@ -78,7 +100,7 @@ public class HinhAnhMauSacControllerAdm {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/toggle-status/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             hinhAnhMauSacService.delete(id);

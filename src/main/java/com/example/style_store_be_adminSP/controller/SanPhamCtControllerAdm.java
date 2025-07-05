@@ -100,17 +100,31 @@ public class SanPhamCtControllerAdm {
     // Thêm mới sản phẩm chi tiết
     @PostMapping
     public ResponseEntity<?> add(@RequestBody SanPhamCtDTOAdm sanPhamCtDTO) {
-        if (sanPhamCtDTO == null || sanPhamCtDTO.getSanPhamId() == null || sanPhamCtDTO.getMauSacId() == null ||
-                sanPhamCtDTO.getGiaBan() == null || sanPhamCtDTO.getSoLuong() == null) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Dữ liệu đầu vào không hợp lệ: Các trường bắt buộc không được để trống");
+        Map<String, String> error = new HashMap<>();
+        if (sanPhamCtDTO == null) {
+            error.put("error", "Dữ liệu đầu vào không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getSanPhamId() == null) {
+            error.put("error", "ID sản phẩm không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getMauSacId() == null) {
+            error.put("error", "ID màu sắc không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getGiaBan() == null) {
+            error.put("error", "Giá bán không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getSoLuong() == null) {
+            error.put("error", "Số lượng không được để trống");
             return ResponseEntity.badRequest().body(error);
         }
         try {
             SanPhamCtDTOAdm created = sanPhamCtService.addSanPhamCt(sanPhamCtDTO);
             return ResponseEntity.ok(created);
         } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
@@ -119,25 +133,42 @@ public class SanPhamCtControllerAdm {
     // Cập nhật sản phẩm chi tiết
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody SanPhamCtDTOAdm sanPhamCtDTO) {
-        if (id == null || id <= 0 || sanPhamCtDTO == null || sanPhamCtDTO.getSanPhamId() == null ||
-                sanPhamCtDTO.getMauSacId() == null || sanPhamCtDTO.getGiaBan() == null ||
-                sanPhamCtDTO.getSoLuong() == null) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Dữ liệu đầu vào không hợp lệ: Các trường bắt buộc không được để trống");
+        Map<String, String> error = new HashMap<>();
+        if (id == null || id <= 0) {
+            error.put("error", "ID không hợp lệ");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO == null) {
+            error.put("error", "Dữ liệu đầu vào không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getSanPhamId() == null) {
+            error.put("error", "ID sản phẩm không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getMauSacId() == null) {
+            error.put("error", "ID màu sắc không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getGiaBan() == null) {
+            error.put("error", "Giá bán không được để trống");
+            return ResponseEntity.badRequest().body(error);
+        }
+        if (sanPhamCtDTO.getSoLuong() == null) {
+            error.put("error", "Số lượng không được để trống");
             return ResponseEntity.badRequest().body(error);
         }
         try {
             SanPhamCtDTOAdm updated = sanPhamCtService.updateSanPhamCt(id, sanPhamCtDTO);
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
     }
 
-    // Xóa (soft delete) sản phẩm chi tiết
-    @DeleteMapping("/{id}")
+
+    @PutMapping("/toggle-status/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         if (id == null || id <= 0) {
             Map<String, String> error = new HashMap<>();

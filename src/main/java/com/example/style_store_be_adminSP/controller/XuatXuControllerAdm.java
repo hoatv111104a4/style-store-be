@@ -1,6 +1,8 @@
 package com.example.style_store_be_adminSP.controller;
 
 import com.example.style_store_be.entity.XuatXu;
+import com.example.style_store_be_adminSP.entity.ChatLieuAdm;
+import com.example.style_store_be_adminSP.entity.KichThuocAdm;
 import com.example.style_store_be_adminSP.entity.XuatXuAdm;
 import com.example.style_store_be_adminSP.service.impl.XuatXuServiceImplAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,33 +60,45 @@ public class XuatXuControllerAdm {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody XuatXuAdm xuatXu) {
+    public ResponseEntity<XuatXuAdm> create(@RequestBody XuatXuAdm chatLieu) {
         try {
-            xuatXuService.add(xuatXu);
-            return ResponseEntity.status(201).build(); // 201 Created
+            XuatXuAdm createdChatLieu = xuatXuService.add(chatLieu);
+            return ResponseEntity.status(201).body(createdChatLieu); // Trả về đối tượng vừa tạo
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity.badRequest().body(null); // 400 Bad Request
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody XuatXuAdm xuatXu) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody XuatXuAdm kichThuoc) {
         try {
-            xuatXu.setId(id); // Gán lại ID cho chắc chắn
-            xuatXuService.update(xuatXu);
+            kichThuoc.setId(id); // Gán lại ID cho chắc chắn
+            xuatXuService.update(kichThuoc);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build(); // 400 Bad Request
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/toggle-status/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             xuatXuService.delete(id);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+    @GetMapping("/search-by-name-or-code")
+    public ResponseEntity<Page<XuatXuAdm>> searchByNameOrCode(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<XuatXuAdm> chatLieuPage = xuatXuService.searchByNameOrCode(keyword, page, size);
+            return ResponseEntity.ok(chatLieuPage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null); // 400 Bad Request
         }
     }
 }

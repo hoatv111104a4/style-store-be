@@ -1,7 +1,6 @@
 package com.example.style_store_be_adminSP.service.impl;
 
 import com.example.style_store_be_adminSP.entity.MauSacSpAdm;
-import com.example.style_store_be_adminSP.entity.SanPhamAdm;
 import com.example.style_store_be_adminSP.reposytory.MauSacSPRepoAdm;
 import com.example.style_store_be_adminSP.service.ICommonServiceAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
+
 @Service
 public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
     @Autowired
@@ -21,7 +20,7 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
     @Override
     public Page<MauSacSpAdm> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return mauSacSPRepository.findAll(pageable);
+        return mauSacSPRepository.findAllByOrderByNgayTaoDesc(pageable); // Sửa để sắp xếp theo ngày tạo
     }
 
     @Override
@@ -30,10 +29,18 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
     }
 
     @Override
-    public SanPhamAdm add(MauSacSpAdm object) {
-        validate(object);
-        if (object.getMa() == null || object.getMa().trim().isEmpty()) {
-            object.setMa("MS-" + UUID.randomUUID().toString().substring(0, 8));
+    public MauSacSpAdm add(MauSacSpAdm object) {
+        validate(object); // Kiểm tra tên trước khi thêm
+
+        // Kiểm tra tính hợp lệ của mã (mã hex)
+        if (object.getMa() == null || !object.getMa().matches("^#[0-9A-Fa-f]{6}$")) {
+            throw new RuntimeException("Mã màu không hợp lệ. Vui lòng nhập mã hex hợp lệ (VD: #FF0000)");
+        }
+
+        // Kiểm tra xem mã đã tồn tại chưa
+        Optional<MauSacSpAdm> existingByMa = mauSacSPRepository.findByMa(object.getMa());
+        if (existingByMa.isPresent()) {
+            throw new RuntimeException("Mã màu " + object.getMa() + " đã tồn tại");
         }
 
         object.setTrangThai(1); // Mặc định là đang hoạt động
@@ -41,25 +48,37 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
         object.setNgaySua(null);
         object.setNgayXoa(null);
 
-        mauSacSPRepository.save(object);
-        return null;
+        return mauSacSPRepository.save(object);
     }
 
     @Override
-    public void update(MauSacSpAdm object) {
+    public MauSacSpAdm update(MauSacSpAdm object) {
         if (object.getId() == null) {
             throw new RuntimeException("ID không được để trống khi cập nhật");
         }
-        validate(object);
+
+        validate(object); // Kiểm tra tên trước khi cập nhật
+
+        // Kiểm tra tính hợp lệ của mã (mã hex)
+        if (object.getMa() == null || !object.getMa().matches("^#[0-9A-Fa-f]{6}$")) {
+            throw new RuntimeException("Mã màu không hợp lệ. Vui lòng nhập mã hex hợp lệ (VD: #FF0000)");
+        }
 
         MauSacSpAdm existing = mauSacSPRepository.findById(object.getId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Màu Sắc với id: " + object.getId()));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy màu sắc với ID: " + object.getId()));
 
+        // Kiểm tra xem mã mới có trùng với mã màu khác (ngoại trừ chính nó)
+        Optional<MauSacSpAdm> existingByMa = mauSacSPRepository.findByMa(object.getMa());
+        if (existingByMa.isPresent() && !existingByMa.get().getId().equals(object.getId())) {
+            throw new RuntimeException("Mã màu " + object.getMa() + " đã tồn tại");
+        }
+
+        existing.setMa(object.getMa());
         existing.setTen(object.getTen());
         existing.setMoTa(object.getMoTa());
         existing.setNgaySua(LocalDateTime.now());
 
-        mauSacSPRepository.save(existing);
+        return mauSacSPRepository.save(existing);
     }
 
     @Override
@@ -68,7 +87,7 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
             throw new RuntimeException("ID không được để trống khi xóa");
         }
         MauSacSpAdm existing = mauSacSPRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Màu Sắc với id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy màu sắc với ID: " + id));
 
         if (existing.getTrangThai() == 1) {
             existing.setNgayXoa(LocalDateTime.now());
@@ -91,19 +110,20 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
         Pageable pageable = PageRequest.of(page, size);
         return mauSacSPRepository.findByNgayXoaIsNotNull(pageable);
     }
-    public Page<MauSacSpAdm> searchByName(String ten, int page, int size) {
-        if (ten == null || ten.trim().isEmpty()) {
-            throw new RuntimeException("Tên chất liệu tìm kiếm không được để trống");
-        }
+
+    public Page<MauSacSpAdm> searchByKeyword(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return mauSacSPRepository.findByTenContainingIgnoreCase(ten.trim(), pageable);
+        return mauSacSPRepository.searchAllByKeyword(
+                (keyword == null || keyword.trim().isEmpty()) ? null : keyword.trim(),
+                pageable
+        );
     }
+
 
     private void validate(MauSacSpAdm object) {
         if (object.getTen() == null || object.getTen().trim().isEmpty()) {
             throw new RuntimeException("Tên màu sắc không được để trống");
         }
-
         if (object.getTen().length() > 50) {
             throw new RuntimeException("Tên màu sắc không được vượt quá 50 ký tự");
         }
@@ -111,11 +131,8 @@ public class MauSacServiceImplAdm implements ICommonServiceAdm<MauSacSpAdm> {
             throw new RuntimeException("Tên màu sắc chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt");
         }
         Optional<MauSacSpAdm> existing = mauSacSPRepository.findByTen(object.getTen().trim());
-        if (existing.isPresent()) {
-            // Nếu đang cập nhật thì phải bỏ qua chính nó
-            if (object.getId() == null || !existing.get().getId().equals(object.getId())) {
-                throw new RuntimeException("Màu sắc đã tồn tại");
-            }
+        if (existing.isPresent() && (object.getId() == null || !existing.get().getId().equals(object.getId()))) {
+            throw new RuntimeException("Tên màu sắc " + object.getTen() + " đã tồn tại");
         }
     }
 }

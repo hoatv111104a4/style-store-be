@@ -1,6 +1,7 @@
 package com.example.style_store_be_adminSP.controller;
 
 import com.example.style_store_be.entity.KichThuoc;
+import com.example.style_store_be_adminSP.entity.ChatLieuAdm;
 import com.example.style_store_be_adminSP.entity.KichThuocAdm;
 import com.example.style_store_be_adminSP.service.impl.KichThuocServiceImplAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +48,24 @@ public class KichThuocControllerAdm {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody KichThuocAdm kichThuoc) {
+    public ResponseEntity<KichThuocAdm> create(@RequestBody KichThuocAdm chatLieu) {
         try {
-            kichThuocService.add(kichThuoc);
-            return ResponseEntity.status(201).build(); // 201 Created
+            KichThuocAdm createdChatLieu = kichThuocService.add(chatLieu);
+            return ResponseEntity.status(201).body(createdChatLieu); // Trả về đối tượng vừa tạo
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity.badRequest().body(null); // 400 Bad Request
+        }
+    }
+    @GetMapping("/search-by-name-or-code")
+    public ResponseEntity<Page<KichThuocAdm>> searchByNameOrCode(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<KichThuocAdm> chatLieuPage = kichThuocService.searchByNameOrCode(keyword, page, size);
+            return ResponseEntity.ok(chatLieuPage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null); // 400 Bad Request
         }
     }
 
@@ -67,7 +80,7 @@ public class KichThuocControllerAdm {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/toggle-status/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             kichThuocService.delete(id);

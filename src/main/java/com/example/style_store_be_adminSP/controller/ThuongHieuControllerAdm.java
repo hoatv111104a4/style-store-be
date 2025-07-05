@@ -1,6 +1,6 @@
 package com.example.style_store_be_adminSP.controller;
 
-import com.example.style_store_be.entity.ThuongHieu;
+
 import com.example.style_store_be_adminSP.entity.ThuongHieuAdm;
 import com.example.style_store_be_adminSP.service.impl.ThuongHieuServiceImplAdm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,33 +47,46 @@ public class ThuongHieuControllerAdm {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody ThuongHieuAdm thuongHieu) {
+    public ResponseEntity<ThuongHieuAdm> create(@RequestBody ThuongHieuAdm thuongHieu) {
         try {
-            thuongHieuService.add(thuongHieu);
-            return ResponseEntity.status(201).build(); // 201 Created
+            ThuongHieuAdm createdThuongHieu = thuongHieuService.add(thuongHieu);
+            return ResponseEntity.status(201).body(createdThuongHieu);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping("/search-by-name-or-code")
+    public ResponseEntity<Page<ThuongHieuAdm>> searchByNameOrCode(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<ThuongHieuAdm> thuongHieuPage = thuongHieuService.searchByNameOrCode(keyword, page, size);
+            return ResponseEntity.ok(thuongHieuPage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody ThuongHieuAdm thuongHieu) {
+    public ResponseEntity<ThuongHieuAdm> update(@PathVariable Long id, @RequestBody ThuongHieuAdm thuongHieu) {
         try {
-            thuongHieu.setId(id); // Gán lại ID cho chắc chắn
-            thuongHieuService.update(thuongHieu);
-            return ResponseEntity.ok().build();
+            thuongHieu.setId(id);
+            ThuongHieuAdm updatedThuongHieu = thuongHieuService.update(thuongHieu);
+            return ResponseEntity.ok(updatedThuongHieu);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/toggle-status/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             thuongHieuService.delete(id);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -83,10 +96,10 @@ public class ThuongHieuControllerAdm {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            Page<ThuongHieuAdm> chatLieuPage = thuongHieuService.searchByName(ten, page, size);
-            return ResponseEntity.ok(chatLieuPage);
+            Page<ThuongHieuAdm> thuongHieuPage = thuongHieuService.searchByName(ten, page, size);
+            return ResponseEntity.ok(thuongHieuPage);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null); // 400 Bad Request
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

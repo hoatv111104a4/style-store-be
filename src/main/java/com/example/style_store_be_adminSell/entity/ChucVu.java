@@ -1,40 +1,37 @@
-package com.example.style_store_be_adminSP.entity;
+package com.example.style_store_be_adminSell.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
-@Table(name = "mau_sac")
+@Table(name = "chuc_vu")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MauSacSpAdm {
+public class ChucVu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "ma", nullable = false, unique = true, length = 7)
-    private String ma; // Sử dụng ma để lưu mã hex (VD: #FF0000)
+    @Column(name = "ma")
+    private String ma;
 
     @Column(name = "ten")
     private String ten;
 
     @Column(name = "ngay_tao")
-    private LocalDateTime ngayTao;
+    private Date ngayTao;
 
     @Column(name = "ngay_sua")
-    private LocalDateTime ngaySua;
+    private Date ngaySua;
 
     @Column(name = "ngay_xoa")
-    private LocalDateTime ngayXoa;
-
-    @Column(name = "mo_ta")
-    private String moTa;
+    private Date ngayXoa;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
