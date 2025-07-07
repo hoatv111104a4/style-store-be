@@ -43,7 +43,7 @@ public class SercurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                http.cors()
+        http.cors()
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(request -> request
@@ -61,6 +61,7 @@ public class SercurityConfig {
                 );
         return http.build();
     }
+
 
     JwtAuthenticationConverter jwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
