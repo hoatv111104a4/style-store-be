@@ -1,5 +1,6 @@
 package com.example.style_store_be.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,9 +18,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SercurityConfig {
-    private CustomJwtDecoder customJwtDecoder;
+
+    @Autowired
+    private  CustomJwtDecoder customJwtDecoder;
+
     private final String [] PUBLIC_ENDPOINTS = {
             "/auth/dang-nhap",
+            "/auth/refresh",
             "/auth/dang-xuat",
             "/auth/introspect",
             "/nguoi-dung/dang-ky",
@@ -37,6 +42,7 @@ public class SercurityConfig {
             "/api/admin/hoa-don-chi-tiet/**",
             "/api/admin/hoa-don/**",
             "/api/admin/nguoi-dung/**"
+
 
     };
 
@@ -59,13 +65,15 @@ public class SercurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
                 );
+
         return http.build();
     }
 
 
     JwtAuthenticationConverter jwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;

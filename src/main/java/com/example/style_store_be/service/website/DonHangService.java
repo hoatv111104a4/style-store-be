@@ -29,6 +29,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -59,8 +61,9 @@ public class DonHangService {
             hoaDon.setMa("HD" + UUID.randomUUID().toString().substring(0, 10));
         }
 
-        // Tạm thời dùng user id 5L (nên thay bằng thông tin đăng nhập thực)
-        User user = userRepoSitory.findById(1L).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepoSitory.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
         hoaDon.setKhachHang(user);
         hoaDon.setNguoiTao(user);
 

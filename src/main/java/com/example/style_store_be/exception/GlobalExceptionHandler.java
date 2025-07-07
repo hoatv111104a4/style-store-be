@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import org.springframework.security.access.AccessDeniedException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
@@ -38,5 +39,13 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setResult(errorCode.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(403); // Hoặc Errorcode.ACCESS_DENIED.getCode() nếu thêm vào enum
+        apiResponse.setResult("Bạn không có quyền truy cập");
+        return ResponseEntity.status(403).body(apiResponse);
     }
 }

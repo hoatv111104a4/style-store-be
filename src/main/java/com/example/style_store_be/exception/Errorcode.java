@@ -8,6 +8,7 @@ public enum Errorcode {
     KEY_INVALID(1001,"Invalid message key"),
     USER_NOT_EXISTED(1005, "User not existed"),
     UNAUTHENTICATED(1006, "Unauthenticated"),
+    ACCESS_DENIED(403, "Bạn không có quyền truy cập"),
     ROLE_NOT_FOUND(404, "Chức vụ không tồn tại");
 
     private int code;

@@ -36,4 +36,5 @@ public class UserService {
         user.setRole(role);
         return userRepoSitory.save(user);
     }
+
 }

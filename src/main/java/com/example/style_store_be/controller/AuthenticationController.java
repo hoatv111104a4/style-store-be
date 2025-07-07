@@ -1,9 +1,6 @@
 package com.example.style_store_be.controller;
 
-import com.example.style_store_be.dto.request.ApiResponse;
-import com.example.style_store_be.dto.request.AuthenticationRequest;
-import com.example.style_store_be.dto.request.IntrospectRequest;
-import com.example.style_store_be.dto.request.LogoutRequest;
+import com.example.style_store_be.dto.request.*;
 import com.example.style_store_be.dto.response.AuthenticationResponse;
 import com.example.style_store_be.dto.response.IntrospectResponse;
 import com.example.style_store_be.service.AuthenticationService;
@@ -43,5 +40,11 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder()
                 .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate (@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 }

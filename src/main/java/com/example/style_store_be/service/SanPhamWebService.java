@@ -7,6 +7,8 @@ import com.example.style_store_be.repository.website.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class SanPhamWebService {
         this.ttSanPhamWebRepo = ttSanPhamWebRepo;
     }
 
+ //   @PreAuthorize("hasAuthority('VIEW_PRODUCT')")
     public Page<SanPhamWebDto> getPageChiTietSanPham(
             String tenSanPham, Long thuongHieuId, Long mauSacId, Long chatLieuId, Long kichThuocId,
             Double minPrice, Double maxPrice,Long sanPhamId, Pageable pageable) {
