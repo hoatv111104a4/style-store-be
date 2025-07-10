@@ -41,6 +41,7 @@ public class SercurityConfig {
             "/api/chat-lieu/**",
             "/api/admin/hoa-don-chi-tiet/**",
             "/api/admin/hoa-don/**",
+            "/api/hoa-don/**",
             "/api/admin/nguoi-dung/**",
             "/admin/giam-gia/**",
             "/api/admin/thong-ke/**",
