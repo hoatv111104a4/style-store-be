@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -166,5 +167,18 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
     public HoaDonSAdm findHoaDonById(Long id) {
         return hoaDonSAdmRepo.findById(id).orElse(null);
     }
+
+    @Override
+    public List<HoaDonSAdm> findByMonthsAndTrangThai(LocalDateTime fromDate) {
+        List<HoaDonSAdm> list = hoaDonSAdmRepo.findHoaDonTrongThangVaTrangThai1(fromDate);
+        return list.stream().toList();
+    }
+
+    @Override
+    public List<HoaDonSAdm> findByDayAndTrangThai(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        List<HoaDonSAdm> list = hoaDonSAdmRepo.findHoaDonNgayBDVaNgayKTAdnTrangThai1(startOfDay,endOfDay);
+        return list.stream().toList();
+    }
+
 
 }

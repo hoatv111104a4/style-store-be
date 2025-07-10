@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -142,6 +145,7 @@ public class HoaDonSAdmController {
 
         PtThanhToanSAdm pttt = ptThanhToanSAdmRepo.findById(hoaDonSAdmDto.getPtThanhToanId()).orElse(null);
 
+        hoaDon.setNguoiXuat(nguoiDungSAdmRepo.findById(1L).orElse(null));
         hoaDon.setThanhToan(pttt);
         hoaDon.setTongSoLuongSp(hoaDonSAdmDto.getTongSoLuongSp());
         hoaDon.setTongTien(hoaDonSAdmDto.getTongTien());
@@ -155,6 +159,22 @@ public class HoaDonSAdmController {
 
         hoaDonSAdmRepo.save(hoaDon);
         return ResponseEntity.ok("Cập nhật khách hàng thành công");
+    }
+
+    @GetMapping("/theo-ngay")
+    public List<HoaDonSAdm> getHoaDonTheoNgayVaTrangThai(
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
+    ) {
+        return hoaDonSAdmService.findByDayAndTrangThai(start, end);
+    }
+
+    @GetMapping("/theo-thang")
+    public List<HoaDonSAdm> getHoaDonTheoThangVaTrangThai(
+            @RequestParam("months") int months
+    ) {
+        LocalDateTime fromDate = LocalDateTime.now().minusMonths(months);
+        return hoaDonSAdmService.findByMonthsAndTrangThai(fromDate);
     }
 
 

@@ -1,43 +1,34 @@
-package com.example.style_store_be_adminSell.entity;
+package com.example.style_store_be_adminThongKe.entity;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "hoa_don")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class HoaDonSAdm {
+@Data
+public class HoaDonTK {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_tao", nullable = false)
-    private NguoiDungSAdm nguoiTao;
+    private NguoiDungTK nguoiTao;
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_xuat")
-    private NguoiDungSAdm nguoiXuat;
+    private NguoiDungTK nguoiXuat;
 
     @ManyToOne
     @JoinColumn(name = "id_thanh_toan")
-    private PtThanhToanSAdm thanhToan;
+    private PhuongThucThanhToanTK thanhToan;
+
+    @ManyToOne
+    @JoinColumn(name = "id_khach_hang")
+    private NguoiDungTK khachHang;
 
     @Column(name = "ma", length = 225)
     private String ma;
@@ -51,24 +42,23 @@ public class HoaDonSAdm {
     @Column(name = "dia_chi_nhan_hang")
     private String diaChiNhanHang;
 
-    @Column(name = "tong_so_luong_sp")
+    @Column(name = "tong_so_luong_sp", nullable = false)
     private Integer tongSoLuongSp;
 
-
-    @Column(name = "tong_tien")
+    @Column(name = "tong_tien", nullable = false, precision = 12, scale = 2)
     private BigDecimal tongTien;
 
-    @Column(name = "tien_thue")
+    @Column(name = "tien_thue", nullable = false, precision = 10, scale = 2)
     private BigDecimal tienThue;
 
-    @Column(name = "ngay_dat")
-    private LocalDateTime ngayDat;
+    @Column(name = "ngay_dat", nullable = false)
+    private LocalDateTime ngayDat = LocalDateTime.now();
 
     @Column(name = "ngay_nhan")
     private LocalDateTime ngayNhan;
 
-    @Column(name = "ngay_tao")
-    private LocalDateTime ngayTao;
+    @Column(name = "ngay_tao", nullable = false)
+    private LocalDateTime ngayTao = LocalDateTime.now();
 
     @Column(name = "ngay_sua")
     private LocalDateTime ngaySua;
@@ -81,9 +71,4 @@ public class HoaDonSAdm {
 
     @Column(name = "mo_ta")
     private String moTa;
-
-    @ManyToOne
-    @JoinColumn(name = "id_khach_hang")
-    private NguoiDungSAdm khachHang;
-
 }

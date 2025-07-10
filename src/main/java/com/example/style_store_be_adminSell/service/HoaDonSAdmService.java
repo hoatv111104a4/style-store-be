@@ -5,6 +5,10 @@ import com.example.style_store_be_adminSell.dto.HoaDonSAdmDto;
 import com.example.style_store_be_adminSell.entity.HoaDonSAdm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface HoaDonSAdmService {
 
@@ -17,4 +21,7 @@ public interface HoaDonSAdmService {
     HoaDonSAdmDto addHoaDon(HoaDonSAdmDto hoaDon);
 
     HoaDonSAdm findHoaDonById(Long id);
+
+    List<HoaDonSAdm> findByMonthsAndTrangThai(LocalDateTime fromDate);
+    List<HoaDonSAdm> findByDayAndTrangThai(LocalDateTime startOfDay,LocalDateTime endOfDay);
 }

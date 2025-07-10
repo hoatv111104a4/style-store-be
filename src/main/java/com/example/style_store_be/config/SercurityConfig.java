@@ -42,7 +42,9 @@ public class SercurityConfig {
             "/api/admin/hoa-don-chi-tiet/**",
             "/api/admin/hoa-don/**",
             "/api/admin/nguoi-dung/**",
-            "/admin/giam-gia/**"
+            "/admin/giam-gia/**",
+            "/api/admin/thong-ke/**",
+            "/api/thong-ke/**"
 
     };
 
@@ -56,6 +58,7 @@ public class SercurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.PUT, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )

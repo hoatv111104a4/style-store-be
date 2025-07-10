@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
@@ -29,15 +28,36 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
     @Autowired
     private HinhAnhRepoAdm repository;
 
-    @Value("${upload.dir:src/main/resources/static/uploads}")
+    @Value("${upload.dir:D:/DATN/style-store-be/src/uploads}")
     private String uploadDir;
 
     // Phương thức tiện ích để định dạng đường dẫn hình ảnh
     private String formatHinhAnh(String hinhAnh, LocalDateTime ngayXoa) {
-        if (hinhAnh != null && !hinhAnh.isEmpty() && !hinhAnh.startsWith("/uploads/") && ngayXoa == null) {
-            return "/uploads/" + hinhAnh;
+        if (hinhAnh != null && !hinhAnh.isEmpty()) {
+            if (ngayXoa == null && !hinhAnh.startsWith("/uploads/")) {
+                return "/uploads/" + hinhAnh;
+            } else if (ngayXoa != null) {
+                // Sau khi xóa, loại bỏ tiền tố /uploads/ để tránh nhầm lẫn
+                return hinhAnh.replace("/uploads/", "");
+            }
         }
         return hinhAnh;
+    }
+
+    // Phương thức tiện ích để xóa file
+    private void deleteFile(String fileName) {
+        File file = new File(uploadDir + File.separator + fileName);
+        if (file.exists()) {
+            try {
+                if (file.delete()) {
+                    logger.info("Đã xóa file vật lý: {}", fileName);
+                } else {
+                    logger.warn("Không thể xóa file vật lý: {}", fileName);
+                }
+            } catch (SecurityException e) {
+                logger.error("Lỗi quyền truy cập khi xóa file {}: {}", fileName, e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -85,7 +105,6 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
         if (hinhAnhMauSac.getHinhAnh() == null || hinhAnhMauSac.getHinhAnh().isEmpty()) {
             throw new IllegalArgumentException("Đường dẫn hình ảnh không được rỗng");
         }
-
         hinhAnhMauSac.setNgayTao(LocalDateTime.now());
         hinhAnhMauSac.setTrangThai(1);
         repository.save(hinhAnhMauSac);
@@ -98,7 +117,6 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
         if (hinhAnhMauSac.getHinhAnh() != null && !hinhAnhMauSac.getHinhAnh().isEmpty()) {
             existing.setHinhAnh(hinhAnhMauSac.getHinhAnh());
         }
-
         existing.setMoTa(hinhAnhMauSac.getMoTa());
         existing.setMauSac(hinhAnhMauSac.getMauSac());
         existing.setTrangThai(hinhAnhMauSac.getTrangThai());
@@ -110,9 +128,13 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
     @Override
     public void delete(Long id) {
         HinhAnhMauSacAdm existing = getOne(id);
+        String fileName = existing.getHinhAnh();
         existing.setNgayXoa(LocalDateTime.now());
         existing.setTrangThai(0);
         repository.save(existing);
+        if (fileName != null && !fileName.isEmpty()) {
+            deleteFile(fileName);
+        }
         logger.info("Xóa mềm hình ảnh thành công với id: {}", id);
     }
 
@@ -164,7 +186,7 @@ public class HinhAnhMauSacServiceImplAdm implements HinhAnhMauSacServiceAdm {
             file.transferTo(dest);
 
             HinhAnhMauSacAdm entity = new HinhAnhMauSacAdm();
-            entity.setHinhAnh(uniqueFileName);
+            entity.setHinhAnh(uniqueFileName); // Lưu tên file gốc, không thêm /uploads/
             entity.setNgayTao(LocalDateTime.now());
             entity.setTrangThai(1);
 

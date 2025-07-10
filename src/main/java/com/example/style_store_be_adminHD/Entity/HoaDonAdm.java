@@ -1,5 +1,4 @@
-package com.example.style_store_be_adminSell.entity;
-
+package com.example.style_store_be_adminHD.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,43 +8,45 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "hoa_don")
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class HoaDonSAdm {
+@NoArgsConstructor
+public class HoaDonAdm {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_nguoi_tao", nullable = false)
-    private NguoiDungSAdm nguoiTao;
+    @JoinColumn(name = "id_nguoi_tao")
+    private NguoiDungAdm idNguoiTao;
 
     @ManyToOne
     @JoinColumn(name = "id_nguoi_xuat")
-    private NguoiDungSAdm nguoiXuat;
+    private NguoiDungAdm idNguoiXuat;
 
     @ManyToOne
     @JoinColumn(name = "id_thanh_toan")
-    private PtThanhToanSAdm thanhToan;
+    private PtThanhToanAdm idThanhToan;
 
-    @Column(name = "ma", length = 225)
+    @Column(name = "ma")
     private String ma;
 
-    @Column(name = "nguoi_dat_hang", length = 225)
+    @Column(name = "nguoi_dat_hang")
     private String nguoiDatHang;
 
-    @Column(name = "nguoi_nhan_hang", length = 225)
+    @Column(name = "nguoi_nhan_hang")
     private String nguoiNhanHang;
 
     @Column(name = "dia_chi_nhan_hang")
@@ -56,25 +57,25 @@ public class HoaDonSAdm {
 
 
     @Column(name = "tong_tien")
-    private BigDecimal tongTien;
+    private Double tongTien;
 
     @Column(name = "tien_thue")
-    private BigDecimal tienThue;
+    private Double tienThue;
 
     @Column(name = "ngay_dat")
-    private LocalDateTime ngayDat;
+    private Date ngayDat;
 
     @Column(name = "ngay_nhan")
-    private LocalDateTime ngayNhan;
+    private Date ngayNhan;
 
     @Column(name = "ngay_tao")
-    private LocalDateTime ngayTao;
+    private Date ngayTao;
 
     @Column(name = "ngay_sua")
-    private LocalDateTime ngaySua;
+    private Date ngaySua;
 
     @Column(name = "ngay_xoa")
-    private LocalDateTime ngayXoa;
+    private Date ngayXoa;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
@@ -84,6 +85,6 @@ public class HoaDonSAdm {
 
     @ManyToOne
     @JoinColumn(name = "id_khach_hang")
-    private NguoiDungSAdm khachHang;
+    private NguoiDungAdm idKhachHang;
 
 }

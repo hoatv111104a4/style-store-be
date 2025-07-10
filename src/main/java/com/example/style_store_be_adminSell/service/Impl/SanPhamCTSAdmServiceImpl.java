@@ -43,7 +43,7 @@ public class SanPhamCTSAdmServiceImpl implements SanPhamCTSAdmService {
 
     @Override
     public Page<SanPhamCtDTOAdm> searchBySanPhamTen(String ten, Pageable pageable) {
-        return sanPhamCtRepository.findBySanPhamTenContaining(ten, pageable).map(this::mapToDTO);
+        return sanPhamCtRepository.findBySanPhamMaContaining(ten, pageable).map(this::mapToDTO);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.style_store_be_adminSell.entity;
 
 
-import com.example.style_store_be.entity.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -53,7 +52,7 @@ public class NguoiDungSAdm {
     private Integer gioiTinh;
 
     @Column(name = "nam_sinh", nullable = false)
-    private Date  namSinh;
+    private Date namSinh;
 
     @Column(name = "ten_dang_nhap", nullable = false, length = 50)
     private String tenDangNhap;
@@ -70,7 +69,7 @@ public class NguoiDungSAdm {
     @Column(name = "ngay_xoa")
     private Date ngayXoa;
     @Column(name = "trang_thai", nullable = false)
-    private Integer trangThai;
+    private Integer trangThai ;
 
     @ManyToOne()
     @JoinColumn(name = "id_chuc_vu")
