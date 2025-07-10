@@ -27,10 +27,10 @@ public class SercurityConfig {
             "/auth/refresh",
             "/auth/dang-xuat",
             "/auth/introspect",
-            "/nguoi-dung/dang-ky",
+            "/nguoi-dung/**",
             "/website/san-pham/**",
             "/api/upload",
-            "/don-hang/dat-hang-online-chua-thanh-toan",
+            "/don-hang/**",
             "/api/admin-san-pham-chi-tiet/**",
             "/api/thuong-hieu/**",
             "/api/xuat-xu/**",
@@ -41,8 +41,8 @@ public class SercurityConfig {
             "/api/chat-lieu/**",
             "/api/admin/hoa-don-chi-tiet/**",
             "/api/admin/hoa-don/**",
-            "/api/admin/nguoi-dung/**"
-
+            "/api/admin/nguoi-dung/**",
+            "/admin/giam-gia/**"
 
     };
 
