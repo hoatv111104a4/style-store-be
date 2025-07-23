@@ -24,5 +24,8 @@ public class UserCreationRequest {
     private String tenDangNhap;
     private String matKhau;
     private Integer trangThai;
+    private String tinh;
+    private String huyen;
+    private String xa;
 
 }
