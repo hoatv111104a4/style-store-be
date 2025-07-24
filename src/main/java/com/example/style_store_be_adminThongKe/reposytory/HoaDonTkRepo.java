@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface HoaDonTkRepo extends JpaRepository<HoaDonTK, Long> {
+
     // Thống kê theo tháng - năm
     @Query(value = """
         SELECT 
@@ -23,7 +24,7 @@ public interface HoaDonTkRepo extends JpaRepository<HoaDonTK, Long> {
         JOIN san_pham_ct spct ON spct.id = hdct.id_san_pham_ct
         JOIN san_pham sp ON sp.id = spct.id_san_pham
         LEFT JOIN hinh_anh_mau_sac hams ON spct.id_hinh_anh_mau_sac = hams.id
-        WHERE hd.trang_thai = 1
+        WHERE hd.trang_thai = 3
           AND MONTH(hd.ngay_dat) = ?1
           AND YEAR(hd.ngay_dat) = ?2
         GROUP BY sp.ten, spct.ma, hams.hinh_anh
@@ -44,7 +45,7 @@ public interface HoaDonTkRepo extends JpaRepository<HoaDonTK, Long> {
         JOIN san_pham_ct spct ON spct.id = hdct.id_san_pham_ct
         JOIN san_pham sp ON sp.id = spct.id_san_pham
         LEFT JOIN hinh_anh_mau_sac hams ON spct.id_hinh_anh_mau_sac = hams.id
-        WHERE hd.trang_thai = 1
+        WHERE hd.trang_thai = 3
           AND YEAR(hd.ngay_dat) = ?1
         GROUP BY sp.ten, spct.ma, hams.hinh_anh
         ORDER BY tongSoLuongBanTK DESC
@@ -64,7 +65,7 @@ public interface HoaDonTkRepo extends JpaRepository<HoaDonTK, Long> {
         JOIN san_pham_ct spct ON spct.id = hdct.id_san_pham_ct
         JOIN san_pham sp ON sp.id = spct.id_san_pham
         LEFT JOIN hinh_anh_mau_sac hams ON spct.id_hinh_anh_mau_sac = hams.id
-        WHERE hd.trang_thai = 1
+        WHERE hd.trang_thai = 3
           AND DATEPART(WEEK, hd.ngay_dat) = ?1
           AND YEAR(hd.ngay_dat) = ?2
         GROUP BY sp.ten, spct.ma, hams.hinh_anh
