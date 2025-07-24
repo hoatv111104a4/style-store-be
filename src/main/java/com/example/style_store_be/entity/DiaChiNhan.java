@@ -54,4 +54,16 @@ public class DiaChiNhan {
     @JoinColumn(name = "id_khach_hang")
     private User user;
 
+    @Column(name = "tinh")
+    private String tinh;
+
+    @Column(name = "huyen")
+    private String huyen;
+
+    @Column(name = "xa")
+    private String xa;
+
+    @Column(name = "so_nha")
+    private String soNha;
+
 }
