@@ -36,8 +36,10 @@ public class UserService {
 
 
     public User createUser(UserCreationRequest request) {
-        if (userRepoSitory.existsByTenDangNhap(request.getTenDangNhap()))
-            throw new AppException(Errorcode.USER_EXISTED);
+        if (userRepoSitory.existsByEmail(request.getEmail()))
+            throw new AppException(Errorcode.EMAIL_EXISTED);
+        if (userRepoSitory.existsBySoDienThoai(request.getSoDienThoai()))
+            throw new AppException(Errorcode.PHONE_EXISTED);
         User user = userMapper.toUser(request);
         user.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
         Role role = roleRepoSitory.findById(3L).orElseThrow(()->new AppException(Errorcode.ROLE_NOT_FOUND));
@@ -56,7 +58,9 @@ public class UserService {
 
     public User createStaff(UserCreationRequest request) {
         if (userRepoSitory.existsByEmail(request.getEmail()))
-            throw new AppException(Errorcode.USER_EXISTED);
+            throw new AppException(Errorcode.EMAIL_EXISTED);
+        if (userRepoSitory.existsBySoDienThoai(request.getSoDienThoai()))
+            throw new AppException(Errorcode.PHONE_EXISTED);
 
         User user = userMapper.toUser(request);
 
@@ -83,6 +87,7 @@ public class UserService {
 
 
     public UserResponse updateUser(Long id, UserUpdateRequest updaterequest) {
+
         User user = userRepoSitory.findById(id).orElseThrow(()-> new RuntimeException("User không tồn tại"));
         userMapper.userUpdateRequest(user,updaterequest);
         user.setNgaySua(new Date());
@@ -98,7 +103,10 @@ public class UserService {
 
     public User createrCustomer(UserCreationRequest request) {
         if (userRepoSitory.existsByEmail(request.getEmail()))
-            throw new AppException(Errorcode.USER_EXISTED);
+            throw new AppException(Errorcode.EMAIL_EXISTED);
+        if (userRepoSitory.existsBySoDienThoai(request.getSoDienThoai()))
+            throw new AppException(Errorcode.PHONE_EXISTED);
+
 
         User user = userMapper.toUser(request);
 

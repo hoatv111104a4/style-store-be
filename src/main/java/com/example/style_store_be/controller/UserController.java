@@ -7,6 +7,7 @@ import com.example.style_store_be.dto.request.UserUpdateRequest;
 import com.example.style_store_be.dto.response.UserResponse;
 import com.example.style_store_be.entity.User;
 import com.example.style_store_be.service.website.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,14 +25,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     UserService userService;
     @PostMapping("/dang-ky")
-    ApiResponse<User> createUser(@RequestBody UserCreationRequest request){
+    ApiResponse<User> createUser(@Valid @RequestBody UserCreationRequest request){
         ApiResponse<User> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUser(request));
         return apiResponse;
     }
 
     @PostMapping("/them-nhan-vien")
-    public ApiResponse<User> createStaff(@RequestBody UserCreationRequest request) {
+    public ApiResponse<User> createStaff(@Valid @RequestBody UserCreationRequest request) {
         try {
             ApiResponse<User> apiResponse = new ApiResponse<>();
             apiResponse.setResult(userService.createStaff(request));
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/them-khach-hang")
-    public ApiResponse<User> createrCustomer(@RequestBody UserCreationRequest request) {
+    public ApiResponse<User> createrCustomer( @Valid @RequestBody UserCreationRequest request) {
         try {
             ApiResponse<User> apiResponse = new ApiResponse<>();
             apiResponse.setResult(userService.createrCustomer(request));
@@ -84,7 +85,7 @@ public class UserController {
     }
 
     @PutMapping("/sua-thong-tin/{id}")
-    UserResponse updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
         try {
             return userService.updateUser(id, request);
 
