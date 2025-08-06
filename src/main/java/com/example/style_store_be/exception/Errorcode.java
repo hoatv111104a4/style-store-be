@@ -9,8 +9,8 @@ public enum Errorcode {
     EMAIL_EXISTED(1002, "Email đã tồn tại, vui lòng nhập email khác"),
     PHONE_EXISTED(1002, "SDT đã tồn tại, vui lòng nhập SDT khác"),
     USER_NOT_EXISTED(1003, "User không tồn tại"),
-    UNAUTHENTICATED(1004, "Bạn chưa đăng nhập"),
-    ACCESS_DENIED(1005, "Bạn không có quyền truy cập"),
+    UNAUTHENTICATED(403, "Bạn chưa đăng nhập"),
+    ACCESS_DENIED(401, "Bạn không có quyền truy cập"),
     ROLE_NOT_FOUND(1006, "Chức vụ không tồn tại"),
 
     USERNAME_INVALID(1010, "Tên đăng nhập phải lớn hơn 3 ký tự"),
