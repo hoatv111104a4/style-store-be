@@ -49,13 +49,10 @@ public class UserCreationRequest {
 
     private Integer trangThai;
 
-    @NotBlank(message = "MISSING_REQUIRED_FIELDS")
     private String tinh;
 
-    @NotBlank(message = "MISSING_REQUIRED_FIELDS")
     private String huyen;
 
-    @NotBlank(message = "MISSING_REQUIRED_FIELDS")
     private String xa;
 
 }
