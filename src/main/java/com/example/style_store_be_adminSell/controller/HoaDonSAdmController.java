@@ -1,9 +1,11 @@
 package com.example.style_store_be_adminSell.controller;
 
 import com.example.style_store_be_adminSell.dto.HoaDonSAdmDto;
+import com.example.style_store_be_adminSell.entity.DiaChiNhanSAdm;
 import com.example.style_store_be_adminSell.entity.HoaDonSAdm;
 import com.example.style_store_be_adminSell.entity.NguoiDungSAdm;
 import com.example.style_store_be_adminSell.entity.PtThanhToanSAdm;
+import com.example.style_store_be_adminSell.repository.DiaChiNhanSAdmRepo;
 import com.example.style_store_be_adminSell.repository.HoaDonSAdmRepo;
 import com.example.style_store_be_adminSell.repository.NguoiDungSAdmRepo;
 import com.example.style_store_be_adminSell.repository.PtThanhToanSAdmRepo;
@@ -32,6 +34,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RestController
@@ -46,6 +51,8 @@ public class HoaDonSAdmController {
     private NguoiDungSAdmRepo nguoiDungSAdmRepo;
     @Autowired
     private PtThanhToanSAdmRepo ptThanhToanSAdmRepo;
+    @Autowired
+    private DiaChiNhanSAdmRepo diaChiNhanSAdmRepo;
 
     @GetMapping
     public ResponseEntity<Page<HoaDonSAdmDto>> getAll(
@@ -76,7 +83,7 @@ public class HoaDonSAdmController {
 
     @PostMapping("/addHDC")
     public ResponseEntity<?> addHDWithNullIdNguoiTao(@RequestBody HoaDonSAdmDto hoaDonSDtoAdm) {
-        if (hoaDonSDtoAdm == null||hoaDonSDtoAdm.getNguoiTaoId()==null) {
+        if (hoaDonSDtoAdm == null) {
             Map<String, String> error = new HashMap<>();
             error.put("eror", "Dữ liệu k hợp lệ, không được để trống");
             return ResponseEntity.badRequest().body(error);
@@ -111,55 +118,31 @@ public class HoaDonSAdmController {
 
     @PutMapping("/updateKH/{id}")
     public ResponseEntity<?> updateHDWithKH(@PathVariable Long id, @RequestBody HoaDonSAdmDto hoaDonSAdmDto) {
-        if (hoaDonSAdmDto == null || hoaDonSAdmDto.getKhachHangId() == null) {
-            return ResponseEntity.badRequest().body("Thiếu thông tin khách hàng");
+        try {
+            String result = hoaDonSAdmService.updateKhachHangChoHoaDon(id, hoaDonSAdmDto);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống");
         }
-
-        HoaDonSAdm hoaDon = hoaDonSAdmRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy hoá đơn"));
-
-        NguoiDungSAdm khachHang = nguoiDungSAdmRepo.findById(hoaDonSAdmDto.getKhachHangId()).orElse(null);
-
-        hoaDon.setKhachHang(khachHang);
-        hoaDon.setNguoiDatHang(khachHang.getHoTen());
-        hoaDon.setNguoiNhanHang(khachHang.getHoTen());
-
-        // Gán địa chỉ nhận hàng theo hình thức
-        if (hoaDonSAdmDto.getHinhThucNhanHang() != null && hoaDonSAdmDto.getHinhThucNhanHang() == 0) {
-            hoaDon.setDiaChiNhanHang("Tại cửa hàng");
-        } else {
-            hoaDon.setDiaChiNhanHang(khachHang.getDiaChi());
-        }
-
-        hoaDonSAdmRepo.save(hoaDon);
-        return ResponseEntity.ok("Cập nhật khách hàng thành công");
     }
+
 
     @PutMapping("/updateHD/{id}")
     public ResponseEntity<?> updateHDWithNull(@PathVariable Long id, @RequestBody HoaDonSAdmDto hoaDonSAdmDto) {
-        if (hoaDonSAdmDto == null || hoaDonSAdmDto.getPtThanhToanId() == null) {
-            return ResponseEntity.badRequest().body("Thiếu thông tin thanh toán");
+        try {
+            String result = hoaDonSAdmService.capNhatThanhToanVaThongTinHoaDon(id, hoaDonSAdmDto);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống");
         }
-        HoaDonSAdm hoaDon = hoaDonSAdmRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy hoá đơn"));
-
-        PtThanhToanSAdm pttt = ptThanhToanSAdmRepo.findById(hoaDonSAdmDto.getPtThanhToanId()).orElse(null);
-
-        hoaDon.setNguoiXuat(nguoiDungSAdmRepo.findById(1L).orElse(null));
-        hoaDon.setThanhToan(pttt);
-        hoaDon.setTongSoLuongSp(hoaDonSAdmDto.getTongSoLuongSp());
-        hoaDon.setTongTien(hoaDonSAdmDto.getTongTien());
-        hoaDon.setTrangThai(3);
-        hoaDon.setMoTa(hoaDonSAdmDto.getMoTa());
-        // Gán địa chỉ nhận hàng theo hình thức
-        if (hoaDonSAdmDto.getHinhThucNhanHang() != null && hoaDonSAdmDto.getHinhThucNhanHang() == 0) {
-            hoaDon.setTienThue(BigDecimal.ZERO);
-        } else {
-            hoaDon.setTienThue(BigDecimal.valueOf(51));
-        }
-
-        hoaDonSAdmRepo.save(hoaDon);
-        return ResponseEntity.ok("Cập nhật khách hàng thành công");
     }
 
     @GetMapping("/theo-ngay")

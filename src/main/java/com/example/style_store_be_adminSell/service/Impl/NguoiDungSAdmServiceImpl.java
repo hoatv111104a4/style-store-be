@@ -1,7 +1,15 @@
 package com.example.style_store_be_adminSell.service.Impl;
 
 
-import com.example.style_store_be_adminSell.dto.HoaDonSAdmDto;
+import com.example.style_store_be.entity.User;
+import com.example.style_store_be.exception.AppException;
+import com.example.style_store_be.exception.Errorcode;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.style_store_be_adminSell.dto.NguoiDungDto;
 import com.example.style_store_be_adminSell.entity.DiaChiNhanSAdm;
 import com.example.style_store_be_adminSell.entity.HoaDonSAdm;
@@ -11,16 +19,23 @@ import com.example.style_store_be_adminSell.repository.NguoiDungSAdmRepo;
 import com.example.style_store_be_adminSell.service.NguoiDungSAdmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@Slf4j
 public class NguoiDungSAdmServiceImpl implements NguoiDungSAdmService {
     @Autowired
     private NguoiDungSAdmRepo nguoiDungSAdmRepo;
 
     @Autowired
     private DiaChiNhanSAdmRepo diaChiNhanSAdmRepo;
+
+    PasswordEncoder passwordEncoder;
 
     private NguoiDungSAdm mapToNguoiDungEntity(NguoiDungDto dto) {
         NguoiDungSAdm entity = new NguoiDungSAdm();
@@ -104,10 +119,18 @@ public class NguoiDungSAdmServiceImpl implements NguoiDungSAdmService {
 
     @Override
     public DiaChiNhanSAdm addNguoiDung(NguoiDungDto dto) {
+         if (nguoiDungSAdmRepo.existsByEmail(dto.getEmail()))
+            throw new AppException(Errorcode.USER_NOT_EXISTED);
+
         NguoiDungSAdm nguoiDung = mapToNguoiDungEntity(dto);
+        nguoiDung.setMa("nv" + UUID.randomUUID().toString().substring(0,10));
+        String rawPassword = "ph" + UUID.randomUUID().toString().substring(0,10);
+        nguoiDung.setMatKhau(passwordEncoder.encode(rawPassword));
+        nguoiDung.setTenDangNhap(rawPassword);
         nguoiDungSAdmRepo.save(nguoiDung);
 
         DiaChiNhanSAdm diaChi = mapToDiaChiEntity(dto,nguoiDung);
+        diaChi.setMa("DC" + UUID.randomUUID().toString().substring(0,10));
         return diaChiNhanSAdmRepo.save(diaChi);
     }
 
