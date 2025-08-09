@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,7 @@ public class GiamGiaService {
         return dotGiamGiaRepository.save(giamGia);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public GiamGia applyVocher(ApDungGGRequest request) {
         GiamGia giamGia = apDungGGMapper.toApDungGiamGia(request);
         if (giamGia.getMa() == null || giamGia.getMa().isEmpty()) {
@@ -115,6 +117,7 @@ public class GiamGiaService {
         return savedGiamGia;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<GiamGiaDto> getPageGiamGia(String tenGiamGia, Integer idTrangThai, String giamGia, Date ngayBatDau ,Date ngayKetThuc,Pageable pageable) {
         return dotGiamGiaRepository.getPageGiamGia(tenGiamGia, idTrangThai, giamGia,ngayBatDau,ngayKetThuc, pageable);
     }

@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -84,6 +85,13 @@ public class UserController {
         return apiResponse;
     }
 
+    @GetMapping("/thong-tin-cua-toi")
+    public ApiResponse<UserResponse> getMyInfo() {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getMyInfo());
+        return apiResponse;
+    }
+
     @PutMapping("/sua-thong-tin/{id}")
     UserResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
         try {
@@ -95,10 +103,21 @@ public class UserController {
 
     }
 
+    @PutMapping("/cap-nhat-thong-tin-cua-toi")
+    UserResponse updateMyInfo(@Valid @RequestBody UserUpdateRequest request) {
+        try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            return userService.updateMyInfo(email, request);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @DeleteMapping("/xoa-nguoi-dung/{id}")
     public String removeNguoiDung(@PathVariable Long id) {
         userService.removeUser(id);
         return "Xoá nhân viên thành công";
     }
+
 
 }
