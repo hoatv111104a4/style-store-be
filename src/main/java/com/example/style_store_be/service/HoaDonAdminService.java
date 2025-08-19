@@ -108,6 +108,7 @@ public class HoaDonAdminService {
         if (nextTrangThai ==3){
             hoaDon.setTrangThaiThanhToan(1);
             hoaDon.setTienKhachTra(hoaDon.getTongTien()+hoaDon.getTienThue());
+            hoaDon.setNgayNhan(new Date());
         }
 
 
