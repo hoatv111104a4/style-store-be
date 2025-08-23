@@ -182,9 +182,8 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
         long count = hoaDonSAdmRepo.count();
         String ma = String.format("HD%03d", count + 1);
         hoaDon.setMa(ma);
-
+        hoaDon.setPtThanhToanId(2L);
         hoaDon.setNgayTao(LocalDateTime.now());
-        hoaDon.setNgayNhan(LocalDateTime.now());
         hoaDon.setNgayDat(LocalDateTime.now());
         hoaDon.setTongSoLuongSp(0);
         hoaDon.setTrangThai(6);
@@ -200,6 +199,7 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public int deleteHoaDon(Long id) {
         return hoaDonSAdmRepo.updateHoaDonTrangThai(id);
     }
@@ -239,15 +239,15 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
 
         hoaDon.setKhachHang(khachHang);
         hoaDon.setNguoiDatHang(khachHang.getHoTen());
-
-        Integer hinhThucNhan = hoaDonSAdmDto.getHinhThucNhanHang();
         Long diaChiNhanId = hoaDonSAdmDto.getDiaChiNhanId();
 
         if (Objects.equals(hoaDonSAdmDto.getHinhThucNhanHang(), 3)) {
             hoaDon.setNguoiNhanHang(khachHang.getHoTen());
             hoaDon.setSoDtNguoiNhan(khachHang.getSoDienThoai());
             hoaDon.setDiaChiNhanHang(khachHang.getDiaChi());
+            hoaDon.setTienThue(BigDecimal.ZERO);
         } else {
+            hoaDon.setTienThue(hoaDonSAdmDto.getTienThue());
             DiaChiNhanSAdm diaChiNhan = null;
             if (diaChiNhanId != null) {
                 diaChiNhan = diaChiNhanSAdmRepo.findById(diaChiNhanId).orElse(null);
@@ -303,7 +303,11 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
         hoaDon.setTienKhachTra(hoaDonSAdmDto.getTienKhachTra());
         hoaDon.setTienThua(hoaDonSAdmDto.getTienThua());
         hoaDon.setTrangThaiThanhToan(1);
-
+        if (Objects.equals(hoaDonSAdmDto.getHinhThucNhanHang(), 3)) {
+            hoaDon.setNgayNhan(LocalDateTime.now());
+            hoaDon.setTienThue(BigDecimal.ZERO);
+        }
+        hoaDon.setThanhToan(ptThanhToanSAdmRepo.findById(2L).orElseThrow());
         hoaDonSAdmRepo.save(hoaDon);
         return "Cập nhật hoá đơn thành công";
     }

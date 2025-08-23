@@ -76,7 +76,6 @@ public class SanPhamCtServiceImplAdm implements SanPhamCtServiceAdm {
                 throw new IllegalArgumentException("Hình ảnh màu sắc không tồn tại hoặc không hoạt động");
             }
         } else {
-            // ❌ Không tự động gán ảnh mặc định
             sanPhamCt.setHinhAnhMauSac(null);
         }
 
@@ -89,7 +88,7 @@ public class SanPhamCtServiceImplAdm implements SanPhamCtServiceAdm {
         sanPhamCt.setMa(ma);
         sanPhamCt.setNgayTao(LocalDateTime.now());
         sanPhamCt.setTrangThai(1);
-        sanPhamCt.setGiaBan(sanPhamCt.getGiaBanGoc()); // Gán giá bán bằng giá gốc
+        sanPhamCt.setGiaBan(sanPhamCt.getGiaBanGoc());
 
         SanPhamCtAdm saved = sanPhamCtRepository.save(sanPhamCt);
         return mapToDTO(saved);
