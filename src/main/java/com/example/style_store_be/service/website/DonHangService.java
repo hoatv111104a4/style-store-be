@@ -112,7 +112,6 @@ public class DonHangService {
             donHangChiTietRepo.saveAll(hoaDonCts);
         }
 
-        // ✅ Chỉ gửi email khi token hợp lệ
         if (hasValidToken) {
             sendInvoiceEmail(savedHoaDon);
         }
