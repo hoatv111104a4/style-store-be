@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SanPhamWebService {
@@ -176,6 +177,7 @@ public class SanPhamWebService {
             chiTietSanPham.setNgaySua(new Date());
         } else {
             chiTietSanPham = sanPhamCtAdmiMapper.toChiTietSanPham(request);
+            chiTietSanPham.setMa("CTSP-" + UUID.randomUUID().toString().substring(0, 8));
             chiTietSanPham.setNgayTao(new Date());
             chiTietSanPham.setTrangThai(1);
             if (chiTietSanPham.getHinhAnhSp() == null || chiTietSanPham.getHinhAnhSp().toString().isEmpty()){

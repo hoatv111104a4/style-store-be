@@ -4,13 +4,11 @@ import com.example.style_store_be.dto.GiamGiaDto;
 import com.example.style_store_be.dto.HoaDonCtDto;
 import com.example.style_store_be.dto.LichSuDonHangDto;
 import com.example.style_store_be.dto.request.DonHangRequest;
-import com.example.style_store_be.entity.HoaDon;
-import com.example.style_store_be.entity.HoaDonCt;
-import com.example.style_store_be.entity.PtThanhToan;
-import com.example.style_store_be.entity.User;
+import com.example.style_store_be.entity.*;
 import com.example.style_store_be.mapper.DonHangChiTietMapper;
 import com.example.style_store_be.mapper.DonHangMapper;
 import com.example.style_store_be.repository.PhuongThucTTRepo;
+import com.example.style_store_be.repository.SanPhamWebRepo;
 import com.example.style_store_be.repository.website.DonHangChiTietRepo;
 import com.example.style_store_be.repository.website.DonHangRepoSitory;
 import com.example.style_store_be.repository.website.UserRepoSitory;
@@ -62,6 +60,7 @@ public class DonHangService {
     UserRepoSitory userRepoSitory;
     PhuongThucTTRepo phuongThucTTRepo;
     JavaMailSender javaMailSender;
+    SanPhamWebRepo sanPhamWebRepo;
 
     public HoaDon createrDonHang(DonHangRequest request) {
         HoaDon hoaDon = donHangMapper.toHoaDon(request);
@@ -158,11 +157,26 @@ public class DonHangService {
                     .map(chiTietRequest -> {
                         HoaDonCt hoaDonCt = donHangChiTietMapper.toDonHangCt(chiTietRequest);
                         hoaDonCt.setHoaDon(savedHoaDon);
+
+                        // ✅ Trừ số lượng sản phẩm
+                        ChiTietSanPham sanPhamCt = sanPhamWebRepo.findById(chiTietRequest.getSanPhamctId())
+                                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+                        int soLuongConLai = sanPhamCt.getSoLuong() - chiTietRequest.getSoLuong();
+                        if (soLuongConLai < 0) {
+                            throw new RuntimeException("Sản phẩm " + sanPhamCt.getMa() + " không đủ số lượng trong kho");
+                        }
+                        sanPhamCt.setSoLuong(soLuongConLai);
+                        sanPhamWebRepo.save(sanPhamCt);
+
                         return hoaDonCt;
                     })
                     .collect(Collectors.toList());
+
             donHangChiTietRepo.saveAll(hoaDonCts);
         }
+
+
         if (hasValidToken){
         sendInvoiceEmail(savedHoaDon);}
         return savedHoaDon;

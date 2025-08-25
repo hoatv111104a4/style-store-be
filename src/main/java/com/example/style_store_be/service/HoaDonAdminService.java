@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +39,13 @@ public class HoaDonAdminService {
     DonHangChiTietRepo donHangChiTietRepo;
     DonHangMapper donHangMapper;
     LichSuDonHangRepo lichSuDonHangRepo;
+
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public Page<HoaDonAdminDto> getPageHoaDonAdmin(String maHoaDonOrTenKhachHang0rSoDienThoai, Integer trangThaiDonHang, Integer trangThaiThanhToan, Integer phuongThucThanhToan, Pageable pageable) {
         return donHangRepoSitory.getPageHoaDonAdmin(maHoaDonOrTenKhachHang0rSoDienThoai, trangThaiDonHang, trangThaiThanhToan, phuongThucThanhToan, pageable);
     }
 
-
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public HoaDonAdminResponse getHoaDonAdminDetail(Long id) {
         HoaDonAdminResponse hoaDonResponse = donHangRepoSitory.findHoaDonAdminResponseById(id)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
@@ -55,11 +58,13 @@ public class HoaDonAdminService {
         return hoaDonResponse;
     }
 
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public HoaDonUDResponse getHoaDonUDDetail(Long id) {
         HoaDon hoaDon = donHangRepoSitory.findById(id).orElseThrow(()-> new RuntimeException("Hóa đơn không tồn tại"));
         return donHangMapper.toHoaDonUDResponse(hoaDon);
     }
 
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public HoaDonUDResponse updateHoaDonUDDetail(Long id, HoaDonUpdateRequest request) {
         HoaDon hoaDon = donHangRepoSitory.findById(id).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
         donHangMapper.hoaDonUdateRequest(hoaDon, request);
@@ -75,6 +80,7 @@ public class HoaDonAdminService {
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public void chuyenTrangThaiDonHang(Long id) {
         // Lấy thông tin hóa đơn
         HoaDon hoaDon = donHangRepoSitory.findById(id)
@@ -129,6 +135,7 @@ public class HoaDonAdminService {
         lichSuDonHangRepo.save(lichSu);
     }
 
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public List<LichSuHoaDonDto> getListLichSu(Long id) {
         return lichSuDonHangRepo.findAllByHoaDonIdOrderByNgayCapNhatDesc(id);
     }
