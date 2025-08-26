@@ -169,29 +169,52 @@ public class SanPhamWebService {
         ChiTietSanPham chiTietSanPham;
 
         if (existingProduct.isPresent()) {
-            // Nếu đã tồn tại, sử dụng sản phẩm đã có và cập nhật số lượng, giá cả
+            // Nếu đã tồn tại, cập nhật số lượng + giá
             chiTietSanPham = existingProduct.get();
             chiTietSanPham.setSoLuong(chiTietSanPham.getSoLuong() + request.getSoLuong());
             chiTietSanPham.setGiaNhap(request.getGiaNhap());
-            chiTietSanPham.setGiaBan(request.getGiaBan());
-            chiTietSanPham.setGiaBanGoc(request.getGiaBan()); // Giữ giá gốc
+            chiTietSanPham.setGiaBanGoc(request.getGiaBan()); // luôn update giá gốc
             chiTietSanPham.setMoTa(request.getMoTa());
             chiTietSanPham.setNgaySua(new Date());
+
+            // Kiểm tra giảm giá
+            GiamGia activeGiamGia = chiTietSanPham.getDotGiamGias().stream()
+                    .filter(g -> g.getTrangThai() == 1)
+                    .findFirst()
+                    .orElse(null);
+
+            if (activeGiamGia != null) {
+                double discountAmount = chiTietSanPham.getGiaBanGoc() * (activeGiamGia.getGiamGia() / 100.0);
+                if (discountAmount > activeGiamGia.getGiamToiDa()) {
+                    discountAmount = activeGiamGia.getGiamToiDa();
+                }
+                double newPrice = chiTietSanPham.getGiaBanGoc() - discountAmount;
+                chiTietSanPham.setGiaBan(newPrice);
+            } else {
+                chiTietSanPham.setGiaBan(chiTietSanPham.getGiaBanGoc());
+            }
+
         } else {
+            // Tạo sản phẩm mới
             chiTietSanPham = sanPhamCtAdmiMapper.toChiTietSanPham(request);
             chiTietSanPham.setMa("CTSP-" + UUID.randomUUID().toString().substring(0, 8));
             chiTietSanPham.setNgayTao(new Date());
             chiTietSanPham.setTrangThai(1);
-            if (chiTietSanPham.getHinhAnhSp() == null || chiTietSanPham.getHinhAnhSp().toString().isEmpty()){
+
+            if (chiTietSanPham.getHinhAnhSp() == null || chiTietSanPham.getHinhAnhSp().toString().isEmpty()) {
                 HinhAnh hinhAnh = hinhAnhSpRepo.findById(1L)
                         .orElseThrow(() -> new RuntimeException("Hình ảnh mặc định không tồn tại"));
                 chiTietSanPham.setHinhAnhSp(hinhAnh);
             }
+
+            // Với sản phẩm mới, mặc định chưa có giảm giá
             chiTietSanPham.setGiaBanGoc(request.getGiaBan());
+            chiTietSanPham.setGiaBan(request.getGiaBan());
         }
 
         return sanPhamWebRepo.save(chiTietSanPham);
     }
+
 
     public SanPhamAdminResponse detailSanPhamCtAdmin(Long id) {
         ChiTietSanPham chiTietSanPham = sanPhamWebRepo.findById(id)
