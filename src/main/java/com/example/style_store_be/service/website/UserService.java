@@ -84,7 +84,7 @@ public class UserService {
         user.setRole(role);
 
         user.setMa("nv" + UUID.randomUUID().toString().substring(0, 10));
-        user.setTenDangNhap(request.getTenDangNhap());
+        user.setTenDangNhap(request.getEmail());
         user.setNgayTao(new Date());
 
         User savedUser = userRepoSitory.save(user);
@@ -156,7 +156,7 @@ public class UserService {
         user.setRole(role);
 
         user.setMa("nv" + UUID.randomUUID().toString().substring(0, 10));
-        user.setTenDangNhap(request.getTenDangNhap());
+        user.setTenDangNhap(request.getEmail());
         user.setNgayTao(new Date());
 
         User savedUser = userRepoSitory.save(user);
