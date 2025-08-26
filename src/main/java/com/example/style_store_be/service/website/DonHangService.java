@@ -44,6 +44,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -251,7 +253,12 @@ public class DonHangService {
             infoTable.addCell(new Cell().add(new Paragraph("Khách hàng:").setBold()).setPadding(5));
             infoTable.addCell(new Cell().add(new Paragraph(hoaDon.getKhachHang().getHoTen())).setPadding(5));
             infoTable.addCell(new Cell().add(new Paragraph("Ngày đặt:").setBold()).setPadding(5));
-            infoTable.addCell(new Cell().add(new Paragraph(hoaDon.getNguoiDatHang())).setPadding(5));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            String ngayDatStr = hoaDon.getNgayDat().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .format(formatter);
+            infoTable.addCell(new Cell().add(new Paragraph(ngayDatStr).setPadding(5)));
             infoTable.addCell(new Cell().add(new Paragraph("Địa chỉ:").setBold()).setPadding(5));
             infoTable.addCell(new Cell().add(new Paragraph(hoaDon.getDiaChiNhanHang())).setPadding(5));
             document.add(infoTable);
