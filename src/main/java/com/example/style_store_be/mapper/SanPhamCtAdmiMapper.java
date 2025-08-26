@@ -69,7 +69,7 @@ public interface SanPhamCtAdmiMapper {
     }
     SanPhamAdminResponse toSanPhamAdminResponse (ChiTietSanPham chiTietSanPham);
 
-
+    @Mapping(target = "ma", ignore = true)
     void sanPhamAdminUpdateRequest(@MappingTarget ChiTietSanPham chiTietSanPham, SanPhamAdminUpdateReq request);
 
 

@@ -185,10 +185,12 @@ public class DonHangService {
 
     private void sendInvoiceEmail(HoaDon hoaDon) {
         try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setTo("quyetvan0803@gmail.com");
+            helper.setTo(email);
             helper.setSubject("Hóa đơn đặt hàng #" + hoaDon.getMa());
             helper.setText("Cảm ơn bạn đã đặt hàng. Vui lòng xem file đính kèm để xem chi tiết hóa đơn.");
 
@@ -200,6 +202,7 @@ public class DonHangService {
             throw new RuntimeException("Lỗi khi gửi email: " + e.getMessage(), e);
         }
     }
+
 
     private byte[] generateInvoicePdf(HoaDon hoaDon) {
         try {

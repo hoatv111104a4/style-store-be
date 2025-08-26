@@ -7,6 +7,8 @@ import com.example.style_store_be.dto.request.SanPhamAdminUpdateReq;
 import com.example.style_store_be.dto.response.SanPhamAdminResponse;
 import com.example.style_store_be.dto.response.SanPhamWebResponse;
 import com.example.style_store_be.entity.*;
+import com.example.style_store_be.exception.AppException;
+import com.example.style_store_be.exception.Errorcode;
 import com.example.style_store_be.mapper.SanPhamCtAdmiMapper;
 import com.example.style_store_be.repository.SanPhamWebRepo;
 import com.example.style_store_be.repository.website.*;
@@ -216,6 +218,10 @@ public class SanPhamWebService {
     }
 
     public String updateSanPhamCTAdmin(Long id, SanPhamAdminUpdateReq request) {
+
+        if (request.getGiaNhap() >= request.getGiaBan()) {
+            throw new AppException(Errorcode.INVALID_MIN_MAX_PRICE);
+        }
         // Lấy sản phẩm cần cập nhật
         ChiTietSanPham currentProduct = sanPhamWebRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
@@ -320,4 +326,14 @@ public class SanPhamWebService {
             throw new RuntimeException("Không tìm thấy sản phẩm chi tiết với ID: " + id);
         }
     }
+
+    public MauSacSp getMauSacById() {
+        return mauSacWebRepo.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy màu sắc!"));
+    }
+
+    public HinhAnh saveHinhAnh(HinhAnh hinhAnh) {
+        return hinhAnhSpRepo.save(hinhAnh);
+    }
+
 }
