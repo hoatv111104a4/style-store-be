@@ -166,8 +166,8 @@ public class SanPhamWebController {
     }
 
     @PutMapping("/cap-nhat-thong-tin-san-pham-chi-tiet/{id}")
-    public ApiResponse<String> updateSanPhamCTAdmin(@PathVariable Long id, @Valid @RequestBody SanPhamAdminUpdateReq request) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
+    public ApiResponse<ChiTietSanPham> updateSanPhamCTAdmin(@PathVariable Long id, @Valid @RequestBody SanPhamAdminUpdateReq request) {
+        ApiResponse<ChiTietSanPham> apiResponse = new ApiResponse<>();
         apiResponse.setResult(sanPhamWebService.updateSanPhamCTAdmin(id,request));
         return apiResponse;
     }

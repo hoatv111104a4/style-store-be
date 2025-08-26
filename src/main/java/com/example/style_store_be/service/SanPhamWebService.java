@@ -217,7 +217,7 @@ public class SanPhamWebService {
                 .build();
     }
 
-    public String updateSanPhamCTAdmin(Long id, SanPhamAdminUpdateReq request) {
+    public ChiTietSanPham updateSanPhamCTAdmin(Long id, SanPhamAdminUpdateReq request) {
 
         if (request.getGiaNhap() >= request.getGiaBan()) {
             throw new AppException(Errorcode.INVALID_MIN_MAX_PRICE);
@@ -257,14 +257,14 @@ public class SanPhamWebService {
             // Xóa sản phẩm hiện tại (vì đã gộp vào sản phẩm trùng)
             sanPhamWebRepo.delete(currentProduct);
 
-            return "Đã gộp và cập nhật sản phẩm trùng thành công";
+            return currentProduct;
         } else {
             // Nếu không có sản phẩm trùng, cập nhật bình thường
             sanPhamCtAdmiMapper.sanPhamAdminUpdateRequest(currentProduct, request);
             currentProduct.setNgaySua(new Date());
             currentProduct.setGiaBanGoc(request.getGiaBan());
             sanPhamWebRepo.save(currentProduct);
-            return "Cập nhật thành công";
+            return currentProduct;
         }
     }
 
