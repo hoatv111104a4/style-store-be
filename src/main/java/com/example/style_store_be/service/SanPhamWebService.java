@@ -222,11 +222,12 @@ public class SanPhamWebService {
         if (request.getGiaNhap() >= request.getGiaBan()) {
             throw new AppException(Errorcode.INVALID_MIN_MAX_PRICE);
         }
+
         // Lấy sản phẩm cần cập nhật
         ChiTietSanPham currentProduct = sanPhamWebRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 
-        // Kiểm tra xem có sản phẩm khác có cùng thuộc tính không (trừ id hiện tại)
+        // Kiểm tra trùng thuộc tính
         Optional<ChiTietSanPham> duplicateProduct = sanPhamWebRepo.findByAttributesExcludeId(
                 currentProduct.getSanPham().getId(),
                 request.getIdMauSac(),
@@ -234,7 +235,7 @@ public class SanPhamWebService {
                 request.getIdKichThuoc(),
                 request.getIdXuatXu(),
                 request.getIdChatLieu(),
-                id // exclude current product id
+                id
         );
 
         if (duplicateProduct.isPresent()) {
@@ -243,30 +244,62 @@ public class SanPhamWebService {
             // Cộng dồn số lượng
             existingProduct.setSoLuong(existingProduct.getSoLuong() + request.getSoLuong());
 
-            // Cập nhật thông tin khác
+            // Cập nhật giá gốc
             existingProduct.setGiaNhap(request.getGiaNhap());
-            existingProduct.setGiaBan(request.getGiaBan());
             existingProduct.setGiaBanGoc(request.getGiaBan());
             existingProduct.setMoTa(request.getMoTa());
             existingProduct.setNgaySua(new Date());
 
+            // Kiểm tra nếu có giảm giá đang hoạt động thì tính lại giá bán
+            GiamGia activeGiamGia = existingProduct.getDotGiamGias().stream()
+                    .filter(g -> g.getTrangThai() == 1)
+                    .findFirst()
+                    .orElse(null);
 
-            // Lưu sản phẩm trùng
+            if (activeGiamGia != null) {
+                double discountAmount = existingProduct.getGiaBanGoc() * (activeGiamGia.getGiamGia() / 100.0);
+                if (discountAmount > activeGiamGia.getGiamToiDa()) {
+                    discountAmount = activeGiamGia.getGiamToiDa();
+                }
+                double newPrice = existingProduct.getGiaBanGoc() - discountAmount;
+                existingProduct.setGiaBan(newPrice);
+            } else {
+                // Không có giảm giá => giá bán = giá gốc
+                existingProduct.setGiaBan(existingProduct.getGiaBanGoc());
+            }
+
             sanPhamWebRepo.save(existingProduct);
-
-            // Xóa sản phẩm hiện tại (vì đã gộp vào sản phẩm trùng)
             sanPhamWebRepo.delete(currentProduct);
 
-            return currentProduct;
+            return existingProduct;
         } else {
-            // Nếu không có sản phẩm trùng, cập nhật bình thường
+            // Nếu không có sản phẩm trùng, cập nhật sản phẩm hiện tại
             sanPhamCtAdmiMapper.sanPhamAdminUpdateRequest(currentProduct, request);
             currentProduct.setNgaySua(new Date());
             currentProduct.setGiaBanGoc(request.getGiaBan());
+
+            // Kiểm tra giảm giá
+            GiamGia activeGiamGia = currentProduct.getDotGiamGias().stream()
+                    .filter(g -> g.getTrangThai() == 1)
+                    .findFirst()
+                    .orElse(null);
+
+            if (activeGiamGia != null) {
+                double discountAmount = currentProduct.getGiaBanGoc() * (activeGiamGia.getGiamGia() / 100.0);
+                if (discountAmount > activeGiamGia.getGiamToiDa()) {
+                    discountAmount = activeGiamGia.getGiamToiDa();
+                }
+                double newPrice = currentProduct.getGiaBanGoc() - discountAmount;
+                currentProduct.setGiaBan(newPrice);
+            } else {
+                currentProduct.setGiaBan(currentProduct.getGiaBanGoc());
+            }
+
             sanPhamWebRepo.save(currentProduct);
             return currentProduct;
         }
     }
+
 
 
     public Page<SanPhamWebDto> getPageChiTietSanPhamBySanPhamIdAndFilters2(
