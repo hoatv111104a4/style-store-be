@@ -41,7 +41,7 @@ public interface HoaDonSAdmRepo extends JpaRepository<HoaDonSAdm, Long> {
             @Param("endOfDay") LocalDateTime endOfDay);
 
     @Modifying
-    @Query("UPDATE HoaDonSAdm h SET h.trangThai = 4 WHERE h.id = :id AND h.trangThai = 6")
+    @Query("UPDATE HoaDonSAdm h SET h.trangThai = 4,  h.khachHang = null WHERE h.id = :id AND h.trangThai = 6")
     int updateHoaDonTrangThai(@Param("id") Long id);
 
 }
