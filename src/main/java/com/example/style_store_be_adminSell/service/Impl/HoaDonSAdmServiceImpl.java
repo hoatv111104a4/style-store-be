@@ -220,6 +220,13 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
+    public List<HoaDonSAdm> findByDayAndTrangThai3(LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        List<HoaDonSAdm> list = hoaDonSAdmRepo.findByNgayNhanRangeAndHoanThanh(startOfDay,endOfDay);
+        return list.stream().toList();
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<HoaDonSAdm> findByDay(LocalDateTime startOfDay, LocalDateTime endOfDay) {
         List<HoaDonSAdm> list = hoaDonSAdmRepo.findHoaDonNgayBDVaNgayKT(startOfDay,endOfDay);
         return list.stream().toList();
