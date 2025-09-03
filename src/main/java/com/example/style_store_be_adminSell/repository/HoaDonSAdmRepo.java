@@ -32,6 +32,14 @@ public interface HoaDonSAdmRepo extends JpaRepository<HoaDonSAdm, Long> {
     List<HoaDonSAdm> findHoaDonNgayBDVaNgayKT(@Param("startOfDay") LocalDateTime startOfDay,
                                               @Param("endOfDay") LocalDateTime endOfDay);
 
+    @Query("SELECT h FROM HoaDonSAdm h " +
+            "WHERE h.ngayNhan BETWEEN :startOfDay AND :endOfDay " +
+            "AND h.khachHang IS NOT NULL " +
+            "AND h.trangThai = 3")
+    List<HoaDonSAdm> findByNgayNhanRangeAndHoanThanh(
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay);
+
     @Modifying
     @Query("UPDATE HoaDonSAdm h SET h.trangThai = 4 WHERE h.id = :id AND h.trangThai = 6")
     int updateHoaDonTrangThai(@Param("id") Long id);
