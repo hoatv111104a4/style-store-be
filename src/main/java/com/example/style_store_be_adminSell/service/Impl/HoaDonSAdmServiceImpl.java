@@ -280,7 +280,7 @@ public class HoaDonSAdmServiceImpl implements HoaDonSAdmService {
                 hoaDon.setSoDtNguoiNhan(khachHang.getSoDienThoai());
             }
         }
-
+        hoaDon.setTongTien(BigDecimal.ZERO);
         hoaDonSAdmRepo.save(hoaDon);
         return "Cập nhật khách hàng thành công";
     }
