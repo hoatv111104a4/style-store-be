@@ -30,6 +30,8 @@ public interface HoaDonSAdmService {
 
     List<HoaDonSAdm> findByDayAndTrangThai(LocalDateTime startOfDay,LocalDateTime endOfDay);
 
+    List<HoaDonSAdm> findByDayAndTrangThai3(LocalDateTime startOfDay,LocalDateTime endOfDay);
+
     List<HoaDonSAdm> findByDay(LocalDateTime startOfDay,LocalDateTime endOfDay);
 
     String updateKhachHangChoHoaDon (Long id,HoaDonSAdmDto hoaDonSAdmDto);
