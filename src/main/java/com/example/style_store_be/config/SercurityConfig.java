@@ -45,7 +45,9 @@ public class SercurityConfig {
             "/api/admin/thong-ke/**",
             "/api/thong-ke/**",
             "/api/admin/san-pham-ct/**",
-            "/api/vnpay/**"
+            "/api/vnpay/**",
+            "/api/admin/hoa-don/ma/**",
+            "/api/admin/hoa-don/searchID/**"
     };
 
 
