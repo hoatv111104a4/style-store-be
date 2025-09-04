@@ -4,10 +4,13 @@ import com.example.style_store_be.dto.request.*;
 import com.example.style_store_be.dto.response.AuthenticationResponse;
 import com.example.style_store_be.dto.response.IntrospectResponse;
 import com.example.style_store_be.service.AuthenticationService;
+import com.example.style_store_be.service.website.UserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ import java.text.ParseException;
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class AuthenticationController {
     AuthenticationService authenticationService;
+    UserService userService;
     @PostMapping("/dang-nhap")
     ApiResponse<AuthenticationResponse> authenticate (@RequestBody AuthenticationRequest request){
         var result = authenticationService.authenticate(request);

@@ -196,4 +196,8 @@ public class UserService {
         }
     }
 
+    public User findByEmail(String email) {
+        return userRepoSitory.findByEmail(email)
+                .orElse(null);
+    }
 }

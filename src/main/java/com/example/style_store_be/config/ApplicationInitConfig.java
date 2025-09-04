@@ -42,6 +42,7 @@ public class ApplicationInitConfig {
                         .tenDangNhap("admin")
                         .email("hoa573898@gmail.com")
                         .matKhau(passwordEncoder.encode("admin"))
+                        .trangThai(1)
                         .role(adminRole)
                         .build();
 

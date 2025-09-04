@@ -89,6 +89,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         User user =userRepoSitory.findByEmail(request.getEmail())
             .orElseThrow(() -> new AppException(Errorcode.USER_NOT_EXISTED));
+        if (user.getTrangThai()== 0) {
+            return AuthenticationResponse.builder()
+                    .authenticated(false)
+                    .build();
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getMatKhau());
         if (!authenticated) throw new AppException(Errorcode.UNAUTHENTICATED);
